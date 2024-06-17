@@ -25,7 +25,7 @@ import googleAuthRoute from "./routes/googleAuth.route";
 import cartroute from "./routes/cart.route";
 import TwoFaRoute from "./routes/2fa.route";
 import orderRoute from "./routes/order.route";
-import messageRoutes from './routes/messages.route';
+import messageRoutes from "./routes/messages.route";
 
 import wishlistroute from "./routes/wishlist.route";
 import {
@@ -39,19 +39,20 @@ const app = express();
 const httpServer = http.createServer(app);
 const ioServer = new SocketIOServer(httpServer);
 
-ioServer.on('connection', (socket) => {
-    console.log('New client connected');
+ioServer.on("connection", (socket) => {
+  console.log("New client connected");
 
-    socket.on('disconnect', () => {
-        console.log('Client disconnected');
-    })
-})
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+  });
+});
 
-app.use(cors({
-  origin: process.env.CORS_ORIGIN_URL, 
-  credentials: true 
-}
-));
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN_URL,
+    credentials: true,
+  })
+);
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -85,7 +86,7 @@ app.use("/admin", adminRoute);
 app.use("/", cartroute);
 app.use("/", wishlistroute);
 app.use("/", TwoFaRoute);
-app.use('/', messageRoutes);
+app.use("/", messageRoutes);
 
 const server = httpServer.listen(PORT, () => {
   console.log(`Server running on Port ${PORT}`);
