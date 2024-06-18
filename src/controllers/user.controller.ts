@@ -198,7 +198,9 @@ export const register = async (req: Request, res: Response) => {
                 <h1>Verfiy You Email</h1>
             </div>
             <div class="content">
+
               <a class="link" href='${process.env.VERFIY_EMAIL_URL}?token=${token}'>
+
               <span class="verify">Verify Email</span>
               </a>
             </div>

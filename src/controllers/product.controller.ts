@@ -4,8 +4,6 @@ import Product from "../database/models/product";
 import CartItem from "../database/models/cartitem";
 import { checkVendorModifyPermission, checkVendorPermission } from "../services/PermisionService";
 import { PRODUCT_ADDED, PRODUCT_REMOVED, PRODUCT_UPDATED, productLifecycleEmitter } from "../helpers/events";
-import { Op } from 'sequelize';
-import { ParsedQs } from 'qs'; 
 import Vendor from "../database/models/vendor";
 
 export const createProduct = async (req: Request, res: Response) => {
