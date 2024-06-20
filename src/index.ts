@@ -47,12 +47,14 @@ ioServer.on("connection", (socket) => {
   });
 });
 
+
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN_URL,
     credentials: true,
   })
 );
+
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(
