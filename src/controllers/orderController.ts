@@ -34,6 +34,7 @@ export const modifyOrderStatus = async (req: Request, res: Response) => {
       if (item.productId === productId) {
         item.status = status;
       }
+
       if (item.status !== "delivered") {
         isOrderDelivered = false;
       }
@@ -41,6 +42,7 @@ export const modifyOrderStatus = async (req: Request, res: Response) => {
     });
 
     order.products = updatedProducts;
+
     order.status = isOrderDelivered ? "delivered" : "pending";
 
     await Order.update(
