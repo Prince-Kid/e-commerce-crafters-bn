@@ -15,6 +15,7 @@ export const getAllProducts = async (page: number, limit: number) => {
         const products = await Product.findAll();
         return products;
     } catch (error) {
+        
         throw new Error('Error while fetching all products');
     }
 };
