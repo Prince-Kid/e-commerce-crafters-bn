@@ -34,7 +34,6 @@ export const modifyOrderStatus = async (req: Request, res: Response) => {
       if (item.productId === productId) {
         item.status = status;
       }
-
       if (item.status !== "delivered") {
         isOrderDelivered = false;
       }
@@ -42,7 +41,6 @@ export const modifyOrderStatus = async (req: Request, res: Response) => {
     });
 
     order.products = updatedProducts;
-
     order.status = isOrderDelivered ? "delivered" : "pending";
 
     await Order.update(
@@ -62,6 +60,8 @@ export const modifyOrderStatus = async (req: Request, res: Response) => {
   }
 };
 
+
+
 export const getAllOrder = async (req: Request, res: Response) => {
   try {
     const response = await Order.findAll();
@@ -72,3 +72,17 @@ export const getAllOrder = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal error server" });
   }
 };
+
+export const getOrder = async(req: Request, res: Response) => {
+  try{
+    
+    const orderId: string = req.params.orderId;
+    const order = await Order.findByPk(orderId);
+    if (!order){
+      return res.status(404).json({ error: "Order not found"});
+    }
+    return res.status(200).json(order);
+  } catch(err: any){
+    return res.status(500).json({ error: err.message})
+  }
+}
