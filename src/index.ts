@@ -25,6 +25,7 @@ import googleAuthRoute from "./routes/googleAuth.route";
 import cartroute from "./routes/cart.route";
 import TwoFaRoute from "./routes/2fa.route";
 import orderRoute from "./routes/order.route";
+import messageRoutes from './routes/messages.route';
 
 import wishlistroute from "./routes/wishlist.route";
 import {
@@ -84,6 +85,7 @@ app.use("/admin", adminRoute);
 app.use("/", cartroute);
 app.use("/", wishlistroute);
 app.use("/", TwoFaRoute);
+app.use('/', messageRoutes);
 
 const server = httpServer.listen(PORT, () => {
   console.log(`Server running on Port ${PORT}`);
