@@ -7,7 +7,11 @@ import {
   createProduct,
   readAllProducts,
   viewProducts,
+
   similarProducts,
+
+
+
 } from "../controllers/product.controller";
 import { VerifyAccessToken } from "../middleware/verfiyToken";
 const router = express.Router();
@@ -21,5 +25,6 @@ router.get("/products/search", searchProduct);
 router.get("/products/vendor/:id", VerifyAccessToken, viewProducts);
 router.put("/updateProduct/:id", VerifyAccessToken, updateProduct);
 router.delete("/deleteProduct/:id", VerifyAccessToken, deleteProduct);
+
 
 export default router;
