@@ -9,39 +9,51 @@ import Vendor from "../database/models/vendor";
 
 export const createProduct = async (req: Request, res: Response) => {
   try {
-    const tokenData = (req as any).token
-    const vendorId: string = req.params.id
-    const permissionCheck: any = await checkVendorPermission(tokenData, vendorId)
+    const tokenData = (req as any).token;
+    const vendorId: string = req.params.id;
+    const permissionCheck: any = await checkVendorPermission(tokenData, vendorId);
+    
     if (!permissionCheck.allowed) {
-      return res.status(permissionCheck.status).json({ message: permissionCheck.message })
+      return res.status(permissionCheck.status).json({ message: permissionCheck.message });
     }
-    const { name, image, description, discount, price, quantity, category, expiringDate } = req.body
-    if (!name || !image || !description || !price || !quantity || !category) {
-      return res.status(200).json("All Field are required")
+    
+    const { name, images, description, discount, price, quantity, category, expiringDate } = req.body;
+
+    if (!name || !images || !description || !price || !quantity || !category) {
+      return res.status(400).json({ message: "All fields are required" });
     }
+
+    if (!Array.isArray(images) || images.length !== 4) {
+      return res.status(400).json({ message: "Exactly 4 images are required" });
+    }
+
+    const imageArray: string[] = images;
+
     const data = {
       name,
-      image,
+      images: imageArray,
       description,
       discount: discount ? discount : 0,
       price,
       quantity,
       category,
       vendorId: vendorId,
-      expiringDate
-    }
-    const save = await saveProduct(data)
+      expiringDate,
+    };
+
+    const save = await saveProduct(data);
+
     if (!save) {
-      return res.status(500).json({ error: "Failed to save data" })
+      return res.status(500).json({ error: "Failed to save data" });
     }
+
     productLifecycleEmitter.emit(PRODUCT_ADDED, data);
 
-    return res.status(201).json({ message: "Product Created", data: save })
+    return res.status(201).json({ message: "Product Created", data: save });
 
   } catch (error: any) {
-    res.status(500).json({ error: error.message })
+    res.status(500).json({ error: error.message });
   }
-
 };
 
 export const readProduct = async (req: Request, res: Response) => {
