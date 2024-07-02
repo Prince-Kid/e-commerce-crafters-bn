@@ -28,6 +28,9 @@ import orderRoute from "./routes/order.route";
 import messageRoutes from "./routes/messages.route";
 
 import wishlistroute from "./routes/wishlist.route";
+
+import analyticRoute from "./routes/analytics.route";
+
 import {
   checkExpiredProducts,
   checkExpiringProducts,
@@ -95,6 +98,12 @@ app.use("/", wishlistroute);
 app.use("/", TwoFaRoute);
 app.use('/', messageRoutes);
 
+
+
+
+app.use("/", messageRoutes);
+
+app.use("/", analyticRoute);
 
 
 cron.schedule("0 0 * * *", () => {

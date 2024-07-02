@@ -36,6 +36,7 @@ module.exports = {
             productName: product.name,
             status: "pending",
             quantity: 3,
+      
           },
         ]),
         createdAt: new Date(),

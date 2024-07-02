@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import Order from "../database/models/order";
 import { findVendorByUserId } from "../services/orderStatus";
 
-const allowedStatuses = ["pending", "shipped", "delivered", "cancelled"];
+const allowedStatuses = ["pending", "delivered", "cancelled"];
 
 export const modifyOrderStatus = async (req: Request, res: Response) => {
   try {
@@ -86,3 +86,4 @@ export const getOrder = async(req: Request, res: Response) => {
     return res.status(500).json({ error: err.message})
   }
 }
+
