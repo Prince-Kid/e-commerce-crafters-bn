@@ -1,3 +1,4 @@
+import { Op } from "sequelize"
 import Product from "../database/models/product"
 
 export const saveProduct = async (data:any)=>{
@@ -40,5 +41,23 @@ export const searchProducts = async (criteria: any, page: number, limit: number)
         return products;
     } catch (error) {
         throw new Error('Error while searching products');
+    }
+};
+
+export const fetchSimilarProducts = async (productId: string, category: string, limit: number = 10) => {
+    try {
+        const similarProducts = await Product.findAll({
+            where: {
+                category,
+                productId: {
+                    [Op.ne]: productId, 
+                },
+            },
+            limit,
+        });
+        return similarProducts;
+    } catch (error) {
+        console.error('Error while fetching similar products:', error);
+        throw new Error('Error while fetching similar products');
     }
 };
