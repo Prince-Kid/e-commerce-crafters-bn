@@ -25,9 +25,12 @@ import googleAuthRoute from "./routes/googleAuth.route";
 import cartroute from "./routes/cart.route";
 import TwoFaRoute from "./routes/2fa.route";
 import orderRoute from "./routes/order.route";
-import messageRoutes from './routes/messages.route';
+import messageRoutes from "./routes/messages.route";
 
 import wishlistroute from "./routes/wishlist.route";
+
+import analyticRoute from "./routes/analytics.route";
+
 import {
   checkExpiredProducts,
   checkExpiringProducts,
@@ -40,9 +43,9 @@ const httpServer = http.createServer(app);
 const ioServer = new SocketIOServer(httpServer);
 
 const corsOptions = {
-  origin: 'http://localhost:8080',
+  origin: "http://localhost:8080",
   credentials: true,
-}
+};
 app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
@@ -83,7 +86,10 @@ app.use("/admin", adminRoute);
 app.use("/", cartroute);
 app.use("/", wishlistroute);
 app.use("/", TwoFaRoute);
-app.use('/', messageRoutes);
+
+app.use("/", messageRoutes);
+
+app.use("/", analyticRoute);
 
 cron.schedule("0 0 * * *", () => {
   checkExpiredProducts();

@@ -35,6 +35,7 @@ module.exports = {
             // @ts-ignore
             productName: product.name,
             quantity: 3,
+            status:"pending"
           },
         ]),
         createdAt: new Date(),

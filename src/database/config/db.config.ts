@@ -35,3 +35,8 @@ const connectSequelize: Sequelize = new Sequelize(getURL(), {
 
 export default connectSequelize;
 
+
+
+
+
+
