@@ -2,6 +2,10 @@ import { Request, Response } from "express";
 import Order from "../database/models/order";
 import Product from "../database/models/product";
 
+
+
+//Annual selling report for Vendor
+
 export const annualSellingReport = async (req: Request, res: Response) => {
   try {
     const vendorId = req.params.id;
@@ -19,6 +23,7 @@ export const annualSellingReport = async (req: Request, res: Response) => {
         if (single_product?.vendorId === vendorId) {
           products.push({
             productId: single_product.productId,
+            name: single_product.name,
             quantity: data.quantity,
             price: single_product.price,
             date: new Date(order.createdAt),
@@ -26,6 +31,26 @@ export const annualSellingReport = async (req: Request, res: Response) => {
         }
       }
     }
+
+    const productRevenueMap: {
+      [key: string]: { productId: string; name: string; totalRevenue: number };
+    } = {};
+
+    for (const prod of products) {
+      if (!productRevenueMap[prod.productId]) {
+        productRevenueMap[prod.productId] = {
+          productId: prod.productId,
+          name: prod.name,
+          totalRevenue: 0,
+        };
+      }
+      productRevenueMap[prod.productId].totalRevenue +=
+        prod.price * prod.quantity;
+    }
+
+    const topProducts = Object.values(productRevenueMap)
+      .sort((a, b) => b.totalRevenue - a.totalRevenue)
+      .slice(0, 5);
 
     const currentMonth = new Date().getMonth();
 
@@ -48,13 +73,24 @@ export const annualSellingReport = async (req: Request, res: Response) => {
       };
     });
 
-    res.status(200).json({ data: products, monthlySales: formattedSales });
+    res.status(200).json({
+      data: products,
+      monthlySales: formattedSales,
+      topProducts,
+    });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
 };
 
-export const overallAnnualSellingReport = async (req: Request, res: Response) => {
+
+
+//Annual selling report for Admin
+
+export const overallAnnualSellingReport = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const orders: any = await Order.findAll();
     if (!orders) {
@@ -68,14 +104,40 @@ export const overallAnnualSellingReport = async (req: Request, res: Response) =>
           where: { productId: data.productId },
         });
 
-        products.push({
-          productId: data.productId,
-          quantity: data.quantity,
-          price: single_product?.price,
-          date: new Date(order.createdAt),
-        });
+        if (single_product) {
+          products.push({
+            productId: data.productId,
+            name: single_product.name,
+            quantity: data.quantity,
+            price: single_product.price,
+            date: new Date(order.createdAt),
+          });
+        }
       }
     }
+
+//Finding top products
+    const productRevenueMap: {
+      [key: string]: { productId: string; name: string; totalRevenue: number };
+    } = {};
+
+    for (const prod of products) {
+      if (!productRevenueMap[prod.productId]) {
+        productRevenueMap[prod.productId] = {
+          productId: prod.productId,
+          name: prod.name,
+          totalRevenue: 0,
+        };
+      }
+      productRevenueMap[prod.productId].totalRevenue +=
+        prod.price * prod.quantity;
+    }
+
+    const topProducts = Object.values(productRevenueMap)
+      .sort((a, b) => b.totalRevenue - a.totalRevenue)
+      .slice(0, 4);
+    
+    //monthly total sales
 
     const currentMonth = new Date().getMonth();
 
@@ -98,12 +160,19 @@ export const overallAnnualSellingReport = async (req: Request, res: Response) =>
       };
     });
 
-    res.status(200).json({ data: products, monthlySales: formattedSales });
+    res.status(200).json({
+      data: products,
+      monthlySales: formattedSales,
+      topProducts,
+    });
   } catch (error: any) {
     console.log(error.message);
     res.status(500).json({ error: error.message });
   }
 };
+
+
+//weekly selling report for Vendor
 
 export const WeeklySellingReport = async (req: Request, res: Response) => {
   try {
@@ -161,7 +230,7 @@ export const WeeklySellingReport = async (req: Request, res: Response) => {
 };
 
 
-
+//weekly selling report for admin
 
 export const OverallWeeklySellingReport = async (req: Request, res: Response) => {
   try {
