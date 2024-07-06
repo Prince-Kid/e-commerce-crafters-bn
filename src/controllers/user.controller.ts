@@ -45,7 +45,7 @@ export const login = async (req: ExtendedRequest, res: Response) => {
       const email = req.session.email || req.body.email;
       const password = req.session.password || req.body.password;
 
-      const existUser = await loginFunc({ email, password });
+      const { existUser, vendorId } = await loginFunc({ email, password });
       if (!existUser) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -69,7 +69,7 @@ export const login = async (req: ExtendedRequest, res: Response) => {
       return res.status(200).json({
         message: "Login successful",
         token,
-        user: existUser,
+        user: existUser,vendorId
       });
     } catch (error) {
       console.error(error);
