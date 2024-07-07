@@ -9,7 +9,7 @@ import {
   viewProducts,
 
   similarProducts,
-
+getPopularProduct
 
 
 } from "../controllers/product.controller";
@@ -20,6 +20,7 @@ router.post("/create/product/:id", VerifyAccessToken, createProduct);
 router.get("/readAllProducts", readAllProducts);
 router.get("/vendorProducts/:id", VerifyAccessToken, viewProducts);
 router.get("/readProduct/:id", readProduct);
+router.get("/popular-product", getPopularProduct);
 router.get('/similarproducts/:id', similarProducts);
 router.get("/products/search", searchProduct);
 router.get("/products/vendor/:id", VerifyAccessToken, viewProducts);
