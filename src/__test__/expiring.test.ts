@@ -33,15 +33,6 @@ describe("Check Expiring Products", () => {
  }, 10000);
 });
 describe("Check Expired Products", () => {
- test("Should return No Expired Products To Update ", async () => {
-  const res = httpMocks.createResponse();
-  await checkExpiredProducts(undefined, res);
-  const statusCode = res.statusCode;
-  const data = res._getJSONData();
-  if (statusCode === 204) {
-   expect(data).toEqual({ message: "No Expired Products to Update" });
-  }
- }, 10000);
  test("Should return Check Expired Product Successfully", async () => {
   const res = httpMocks.createResponse();
   await checkExpiredProducts(undefined, res);

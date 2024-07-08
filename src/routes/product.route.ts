@@ -7,6 +7,7 @@ import {
   createProduct,
   readAllProducts,
   viewProducts,
+  getPopularProduct,
 } from "../controllers/product.controller";
 import { VerifyAccessToken } from "../middleware/verfiyToken";
 const router = express.Router();

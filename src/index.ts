@@ -33,24 +33,21 @@ import {
 } from "./helpers/expiring";
 import subscriptionRoute from "./routes/subscription.route";
 import notificationRoute from "./routes/notifications.route";
+import chatRouter from "./routes/chat.route";
 
 const app = express();
 const httpServer = http.createServer(app);
 const ioServer = new SocketIOServer(httpServer);
 
-ioServer.on('connection', (socket) => {
-    console.log('New client connected');
+ioServer.on("connection", (socket) => {
+  console.log("New client connected");
 
-    socket.on('disconnect', () => {
-        console.log('Client disconnected');
-    })
-})
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+  });
+});
 
-app.use(cors({
-  origin: process.env.CORS_ORIGIN_URL, 
-  credentials: true 
-}
-));
+app.use(cors({ origin: process.env.CORS_ORIGIN_URL, credentials: true }));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -84,6 +81,7 @@ app.use("/admin", adminRoute);
 app.use("/", cartroute);
 app.use("/", wishlistroute);
 app.use("/", TwoFaRoute);
+app.use("/", chatRouter);
 
 const server = httpServer.listen(PORT, () => {
   console.log(`Server running on Port ${PORT}`);
