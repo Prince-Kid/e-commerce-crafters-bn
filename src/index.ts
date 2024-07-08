@@ -84,6 +84,7 @@ app.use("/", cartroute);
 app.use("/", wishlistroute);
 app.use("/", TwoFaRoute);
 app.use('/', messageRoutes);
+app.set('io', ioServer);
 
 cron.schedule("0 0 * * *", () => {
   checkExpiredProducts();

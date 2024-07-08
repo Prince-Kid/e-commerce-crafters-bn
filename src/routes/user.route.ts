@@ -8,6 +8,7 @@ import {
  register,
  updatePassword,
  verifyEmail,
+ getUserInfo
 } from "../controllers/user.controller";
 import { VerifyAccessToken } from "../middleware/verfiyToken";
 
@@ -26,5 +27,6 @@ route.post("/login",twoFAController, login);
 route.post("/addreview/:id", addReview);
 route.post("/addfeedback/:id", addFeedback);
 route.get("/verfiy-email", verifyEmail);
+route.get("/user-info/:id", getUserInfo);
 
 export default route;
