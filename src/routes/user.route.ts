@@ -9,6 +9,7 @@ import {
  register,
  updatePassword,
  verifyEmail,
+ getUserInfo
 } from "../controllers/user.controller";
 
 import { VerifyAccessToken } from "../middleware/verfiyToken";
@@ -30,5 +31,6 @@ route.post("/addfeedback/:id", addFeedback);
 route.get("/getfeedback/:id", selectFeedback);
 
 route.get("/verfiy-email", verifyEmail);
+route.get("/user-info/:id", getUserInfo);
 
 export default route;
