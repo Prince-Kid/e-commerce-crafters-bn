@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Order from "../database/models/order";
 import { findVendorByUserId } from "../services/orderStatus";
+import Product from "../database/models/product";
 
 const allowedStatuses = ["pending", "delivered", "cancelled"];
 
@@ -84,6 +85,29 @@ export const getOrder = async(req: Request, res: Response) => {
     return res.status(200).json(order);
   } catch(err: any){
     return res.status(500).json({ error: err.message})
+  }
+}
+export const getAllOrders = async (req:Request, res: Response) => {
+  try{
+    const userId = (req as any).token.id;
+    const vendor = await findVendorByUserId(userId);
+
+    let orders;
+
+    if(vendor){
+      orders = await Order.findAll({
+        include: [{
+          model: Product,
+          where: { vendorId: vendor.vendorId },
+          required: true
+        }]
+      });
+    } else{
+      orders = await Order.findAll({ where: { userId }})
+    }
+    return res.status(200).json(orders);
+  } catch(error: any){
+    return res.status(500).json({ error: error.message})
   }
 }
 
