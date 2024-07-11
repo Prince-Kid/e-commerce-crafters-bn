@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import Order from "../database/models/order";
 import { findVendorByUserId } from "../services/orderStatus";
-import Product from "../database/models/product";
 
 const allowedStatuses = ["pending", "delivered", "cancelled"];
 
@@ -110,4 +109,29 @@ export const getAllOrders = async (req:Request, res: Response) => {
   }
 }
 
+
+export const getAllOrder = async (req: Request, res: Response) => {
+  try {
+    const response = await Order.findAll();
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal error server" });
+  }
+};
+
+export const getOrder = async(req: Request, res: Response) => {
+  try{
+    
+    const orderId: string = req.params.orderId;
+    const order = await Order.findByPk(orderId);
+    if (!order){
+      return res.status(404).json({ error: "Order not found"});
+    }
+    return res.status(200).json(order);
+  } catch(err: any){
+    return res.status(500).json({ error: err.message})
+  }
+}
 

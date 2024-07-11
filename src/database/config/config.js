@@ -45,6 +45,12 @@ module.exports = {
     database: process.env.DB_NAME || "postgres",
     host: process.env.DB_HOST || "127.0.0.1",
     dialect: "postgres",
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: true,
+      }
+    }
   },
   test: {
     username: process.env.DB_USERNAME || "postgres",
@@ -52,6 +58,12 @@ module.exports = {
     database: process.env.DB_NAME || "postgres",
     host: process.env.DB_HOST || "127.0.0.1",
     dialect: "postgres",
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: true,
+      }
+    }
   },
   production: {
     username: process.env.DB_USERNAME || "postgres",
@@ -59,5 +71,13 @@ module.exports = {
     database: process.env.DB_NAME || "postgres",
     host: process.env.DB_HOST || "127.0.0.1",
     dialect: "postgres",
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: true,
+      }
+    }
   },
 };
+
+module.exports = config;

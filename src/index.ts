@@ -57,6 +57,7 @@ app.use(cors({
   credentials: true 
 }
 ));
+
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -96,14 +97,10 @@ app.use("/admin", adminRoute);
 app.use("/", cartroute);
 app.use("/", wishlistroute);
 app.use("/", TwoFaRoute);
-
 app.use("/", chatRouter);
-
 app.use('/', messageRoutes);
 app.use("/", messageRoutes);
-
 app.use("/", analyticRoute);
-
 
 
 cron.schedule("0 0 * * *", () => {

@@ -1,11 +1,12 @@
 import express from "express"
 const route = express.Router()
-import { deletingVendor, editVendor, registerVendor } from "../controllers/vendor.controller"
+import { allRequests, allStores, deletingVendor, editVendor, registerVendor } from "../controllers/vendor.controller"
 import { viewProducts } from "../controllers/product.controller"
 import { VerifyAccessToken } from "../middleware/verfiyToken"
 import { selectFeedback, selectReview, view_vendor_feedback } from "../controllers/review.controller"
 
-
+route.get('/allstores', allStores)
+route.get('/allrequests', allRequests)
 route.post('/requestVendor', registerVendor)
 route.delete('/deleteVendor/:id',VerifyAccessToken,deletingVendor)
 route.get('/vendorProduct/:id', viewProducts)

@@ -1,11 +1,23 @@
 import { Request, Response } from "express";
-
-import { saveProduct, searchProducts, getAllProducts, getProductById, fetchSimilarProducts } from "../services/productService";
+import {
+  saveProduct,
+  searchProducts,
+  getAllProducts,
+} from "../services/productService";
 import Product from "../database/models/product";
 import CartItem from "../database/models/cartitem";
-
-import { checkVendorModifyPermission, checkVendorPermission } from "../services/PermisionService";
-import { PRODUCT_ADDED, PRODUCT_REMOVED, PRODUCT_UPDATED, productLifecycleEmitter } from "../helpers/events";
+import {
+  checkVendorModifyPermission,
+  checkVendorPermission,
+} from "../services/PermisionService";
+import {
+  PRODUCT_ADDED,
+  PRODUCT_REMOVED,
+  PRODUCT_UPDATED,
+  productLifecycleEmitter,
+} from "../helpers/events";
+import { Op } from "sequelize";
+import { ParsedQs } from "qs";
 import Vendor from "../database/models/vendor";
 import { request } from "http";
 
@@ -58,7 +70,7 @@ export const createProduct = async (req: Request, res: Response) => {
     if (!save) {
       return res.status(500).json({ error: "Failed to save data" });
     }
-
+    
     productLifecycleEmitter.emit(PRODUCT_ADDED, data);
 
     return res.status(201).json({ message: "Product Created", data: save });
@@ -94,7 +106,7 @@ export const similarProducts = async (req: Request, res: Response) => {
 
       return res.status(404).json({ error: "Product not found" });
     }
- console.log("hhhhhggggggggghhhhh",product)
+
     const category = product.category;
     const similarProducts = await fetchSimilarProducts(productId, category);
 
