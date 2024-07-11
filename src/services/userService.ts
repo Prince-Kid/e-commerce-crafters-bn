@@ -1,9 +1,11 @@
 import User from "../database/models/user";
-import bcrypt from 'bcrypt'
+import bcrypt from "bcrypt";
+import Vendor from "../database/models/vendor";
+import { userInfo } from "os";
 
 export const saveUser = async (data: any) => {
   const { name, email, password } = data;
-  const hashedPwd = bcrypt.hashSync(password, 10)
+  const hashedPwd = bcrypt.hashSync(password, 10);
   const insertUser = await User.create({
     name: name,
     email: email,
@@ -12,15 +14,21 @@ export const saveUser = async (data: any) => {
   return insertUser;
 };
 
-
-
-export const loginFunc = async (userData: { email: string; password: string }) => {
-  const { email} = userData;
+export const loginFunc = async (userData: {
+  email: string;
+  password: string;
+}) => {
+  const { email } = userData;
   try {
     const existUser = await User.findOne({ where: { email } });
-    return existUser; 
+    const vendor = await Vendor.findOne({
+      where: { userId: existUser?.userId },
+    });
+    const vendorId = vendor ? vendor.vendorId : null;
+
+    return { existUser, vendorId };
   } catch (error) {
-    throw new Error('Unable to log in, may be user not found');
+    throw new Error("Unable to log in, may be user not found");
   }
 };
 
@@ -37,16 +45,19 @@ export const updateUser = async (user: any) => {
     await user.save();
     return user;
   } catch (error) {
-    throw new Error('Error updating user');
+    throw new Error("Error updating user");
   }
-}
+};
 
-export const comparePassword = async (password: string, hashedPassword: string) => {
+export const comparePassword = async (
+  password: string,
+  hashedPassword: string
+) => {
   return await bcrypt.compare(password, hashedPassword);
 };
 
 export const hashPassword = async (password: string) => {
-  return bcrypt.hashSync(password, 10)
+  return bcrypt.hashSync(password, 10);
 };
 
 export const updateUserPassword = async (user: any, hashedPassword: string) => {

@@ -25,8 +25,12 @@ import googleAuthRoute from "./routes/googleAuth.route";
 import cartroute from "./routes/cart.route";
 import TwoFaRoute from "./routes/2fa.route";
 import orderRoute from "./routes/order.route";
+import messageRoutes from "./routes/messages.route";
 
 import wishlistroute from "./routes/wishlist.route";
+
+import analyticRoute from "./routes/analytics.route";
+
 import {
   checkExpiredProducts,
   checkExpiringProducts,
@@ -47,7 +51,12 @@ ioServer.on("connection", (socket) => {
   });
 });
 
-app.use(cors({ origin: process.env.CORS_ORIGIN_URL, credentials: true }));
+
+app.use(cors({
+  origin: process.env.CORS_ORIGIN_URL, 
+  credentials: true 
+}
+));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -62,7 +71,13 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(express.static("public"));
-app.use(express.json());
+app.use((req, res, next) => {
+  if (req.originalUrl === "/webhook") {
+    next();
+  } else {
+    express.json()(req, res, next);
+  }
+});
 
 app.use("/", userRoute);
 app.use("/", authRoute);
@@ -81,17 +96,27 @@ app.use("/admin", adminRoute);
 app.use("/", cartroute);
 app.use("/", wishlistroute);
 app.use("/", TwoFaRoute);
+
 app.use("/", chatRouter);
 
-const server = httpServer.listen(PORT, () => {
-  console.log(`Server running on Port ${PORT}`);
-});
+app.use('/', messageRoutes);
+app.use("/", messageRoutes);
+
+app.use("/", analyticRoute);
+
+
 
 cron.schedule("0 0 * * *", () => {
   checkExpiredProducts();
 });
-cron.schedule("0 0 * * */14", () => {
+cron.schedule("0 0 1 * *", () => {
   checkExpiringProducts();
+});
+
+const server = httpServer.listen(PORT, () => {
+  console.log(`Server running on Port ${PORT}`);
+  checkExpiringProducts();
+  checkExpiredProducts();
 });
 
 export { app, server, ioServer };
