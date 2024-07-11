@@ -28,6 +28,7 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
   try {
     const { orderId } = req.params;
     const status = req.body.status;
+    const vendorId = (req as any).vendorId;
 
     const validStatus = [
       "pending",
@@ -48,6 +49,8 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
       return res.status(404).send({ message: "Order not found" });
     }
 
+    
+
     order.status = status;
 
     if (status === "processing") {
@@ -59,14 +62,16 @@ export const updateOrderStatus = async (req: Request, res: Response) => {
       order.expectedDeliveryDate = expectedDeliveryDate;
     }
 
+    console.log('Updating order to: ', status)
     await order.save();
+    console.log('Order updated successfully: ', order.toJSON())
 
     const formattedDate = order.expectedDeliveryDate
       ? order.expectedDeliveryDate.toLocaleDateString()
       : null;
 
     try {
-      await pusher.trigger("e-commerce-crafters", "orderStatusUpdated", {
+      await pusher.trigger("order-channel", "order-updated", {
         orderId,
         status: order.status,
         expectedDeliveryDate: formattedDate,

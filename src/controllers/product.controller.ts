@@ -19,6 +19,8 @@ import {
 import { Op } from "sequelize";
 import { ParsedQs } from "qs";
 import Vendor from "../database/models/vendor";
+import { request } from "http";
+
 
 export const createProduct = async (req: Request, res: Response) => {
   try {
@@ -46,9 +48,16 @@ export const createProduct = async (req: Request, res: Response) => {
     if (!name || !image || !description || !price || !quantity || !category) {
       return res.status(200).json("All Field are required");
     }
+
+    if (!Array.isArray(image) || image.length !== 4) {
+      return res.status(400).json({ message: "Exactly 4 images are required" });
+    }
+
+    const imageArray: string[] = image;
+
     const data = {
       name,
-      image,
+      images: imageArray,
       description,
       discount: discount ? discount : 0,
       price,
@@ -61,6 +70,7 @@ export const createProduct = async (req: Request, res: Response) => {
     if (!save) {
       return res.status(500).json({ error: "Failed to save data" });
     }
+    
     productLifecycleEmitter.emit(PRODUCT_ADDED, data);
 
     return res.status(201).json({ message: "Product Created", data: save });
@@ -87,6 +97,31 @@ export const readProduct = async (req: Request, res: Response) => {
   }
 };
 
+export const similarProducts = async (req: Request, res: Response) => {
+  try {
+    const productId = req.params.id;
+    const product = await getProductById(productId);
+
+    if (!product) {
+
+      return res.status(404).json({ error: "Product not found" });
+    }
+
+    const category = product.category;
+    const similarProducts = await fetchSimilarProducts(productId, category);
+
+    if (similarProducts.length === 0) {
+      return res.status(404).json({ error: "No similar products found" });
+    }
+    console.log("hhhhhhhhhh",similarProducts)
+
+    return res.status(200).json(similarProducts);
+    
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // delete product
 export const readAllProducts = async (req: Request, res: Response) => {
   try {
@@ -104,6 +139,7 @@ export const readAllProducts = async (req: Request, res: Response) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
 
 export const searchProduct = async (req: Request, res: Response) => {
   try {
