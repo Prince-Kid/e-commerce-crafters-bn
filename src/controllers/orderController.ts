@@ -62,7 +62,6 @@ export const modifyOrderStatus = async (req: Request, res: Response) => {
 };
 
 
-
 export const getAllOrder = async (req: Request, res: Response) => {
   try {
     const response = await Order.findAll();
@@ -110,4 +109,5 @@ export const getAllOrders = async (req:Request, res: Response) => {
     return res.status(500).json({ error: error.message})
   }
 }
+
 

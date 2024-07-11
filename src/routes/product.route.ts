@@ -11,7 +11,6 @@ import {
   similarProducts,
 getPopularProduct
 
-
 } from "../controllers/product.controller";
 import { VerifyAccessToken } from "../middleware/verfiyToken";
 const router = express.Router();
