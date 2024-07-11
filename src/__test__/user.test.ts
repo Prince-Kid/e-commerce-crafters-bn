@@ -131,7 +131,7 @@ describe('register', () => {
       .send({ name: 'John Doe', email: 'test@example.com', password: 'password123' });
 
     expect(res.status).toBe(201);
-    expect(res.body.message).toBe('User created');
+    expect(res.body.message).toBe('Email Verfication Sent');
     expect(res.body.user).toEqual(newUser);
     expect(res.body.email).toBe('Email sent to your email address');
   });

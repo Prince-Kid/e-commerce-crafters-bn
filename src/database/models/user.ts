@@ -23,6 +23,11 @@ class User extends Model {
     User.hasMany(models.Review, {
       foreignKey: "userId",
     });
+    User.hasOne(models.Vendor, {
+      foreignKey: 'userId',
+      as: "Vendor"
+
+    })
   }
   static initModel(sequelize: Sequelize) {
     User.init(

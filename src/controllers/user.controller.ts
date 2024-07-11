@@ -199,10 +199,10 @@ export const register = async (req: Request, res: Response) => {
             </div>
             <div class="content">
 
-              <a class="link" href='${process.env.VERFIY_EMAIL_URL}?token=${token}'>
+             <a class="link" href='${process.env.VERFIY_EMAIL_URL}?token=${token}' target="_self">
+  <span class="verify">Verify Email</span>
+</a>
 
-              <span class="verify">Verify Email</span>
-              </a>
             </div>
             <div class="footer">
                 <p>&copy; 2024 crafters. All rights reserved.</p>
