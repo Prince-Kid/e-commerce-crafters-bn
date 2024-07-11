@@ -8,7 +8,7 @@ import { checkVendorModifyPermission, checkVendorPermission } from "../services/
 import { PRODUCT_ADDED, PRODUCT_REMOVED, PRODUCT_UPDATED, productLifecycleEmitter } from "../helpers/events";
 import Vendor from "../database/models/vendor";
 import { request } from "http";
-import CartItem from "../database/models/cartitem";
+
 
 export const createProduct = async (req: Request, res: Response) => {
   try {
