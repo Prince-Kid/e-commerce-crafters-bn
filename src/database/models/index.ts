@@ -3,6 +3,7 @@
 import Admin from "./admin";
 import Cart from "./cart";
 import CartItem from "./cartitem";
+import ChatMessage from "./chatmessage";
 import Message from "./messages";
 import Order from "./order";
 import Product from "./product";
@@ -28,6 +29,7 @@ const models = {
   Rating,
   Review,
   WishlistItem,
+  ChatMessage
 };
 
 Object.keys(models).forEach((modelName) => {
