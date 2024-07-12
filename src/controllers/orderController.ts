@@ -70,16 +70,8 @@ export const getAllOrders = async (req:Request, res: Response) => {
 
     let orders;
 
-    if(vendor){
-      orders = await Order.findAll({
-        include: [{
-          model: Product,
-          where: { vendorId: vendor.vendorId }
-        }]
-      });
-    } else{
       orders = await Order.findAll({ where: { userId }})
-    }
+    
     return res.status(200).json(orders);
   } catch(error: any){
     return res.status(500).json({ error: error.message})
