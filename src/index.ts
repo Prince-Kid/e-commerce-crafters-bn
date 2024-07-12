@@ -98,10 +98,14 @@ app.use("/", cartroute);
 app.use("/", wishlistroute);
 app.use("/", TwoFaRoute);
 
-app.use("/", messageRoutes);
 
 app.use("/", messageRoutes);
 
+
+// app.use("/", chatRouter);
+// app.use('/', messageRoutes);
+
+app.use("/", messageRoutes);
 app.use("/", analyticRoute);
 
 app.use("/", chatRouter);

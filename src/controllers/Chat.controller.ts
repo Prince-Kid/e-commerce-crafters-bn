@@ -110,3 +110,32 @@ export const getAllVendors = async(req:Request,res:Response)=>{
         
     }
 }
+export const getLatestMessages = async (req: Request, res: Response) => {
+  try {
+      const userId = req.params.id;
+      const vendors = await Vendor.findAll();
+
+      const vendorMessages = await Promise.all(
+          vendors.map(async (vendor) => {
+              const latestMessage = await ChatMessage.findOne({
+                  // where: {
+                  //     [Op.or]: [
+                  //         { sender: vendor.userId, receiver: userId },
+                  //         { sender: userId, receiver: vendor.userId },
+                  //     ],
+                  // },
+                  order: [['createdAt', 'DESC']],
+              });
+
+              return {
+                  vendor,
+                  latestMessage,
+              };
+          })
+      );
+
+      res.status(200).json(vendorMessages);
+  } catch (error: any) {
+      res.status(500).json({ error: error.message });
+  }
+};

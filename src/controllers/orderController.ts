@@ -1,7 +1,9 @@
 import { Request, Response } from "express";
 import Order from "../database/models/order";
 import { findVendorByUserId } from "../services/orderStatus";
+
 import Vendor from "../database/models/vendor";
+
 import Product from "../database/models/product";
 
 const allowedStatuses = ["pending", "delivered", "cancelled"];
@@ -62,6 +64,31 @@ export const modifyOrderStatus = async (req: Request, res: Response) => {
   }
 };
 
+export const getAllOrders = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).token.id;
+    const vendor = await findVendorByUserId(userId);
+
+    let orders;
+
+    if (vendor) {
+      orders = await Order.findAll({
+        include: [
+          {
+            model: Product,
+            where: { vendorId: vendor.vendorId },
+          },
+        ],
+      });
+    } else {
+      orders = await Order.findAll({ where: { userId } });
+    }
+    return res.status(200).json(orders);
+  } catch (error: any) {
+    return res.status(500).json({ error: error.message });
+  }
+};
+
 export const getAllOrder = async (req: Request, res: Response) => {
   try {
     const response = await Order.findAll();
@@ -88,7 +115,7 @@ export const getOrder = async (req: Request, res: Response) => {
 
 export const getSellerOrder = async (req: Request, res: Response) => {
   try {
-    const vendorId=req.params.vendorId
+    const vendorId = req.params.vendorId;
     const orders: any = await Order.findAll();
     if (!orders) {
       return res.status(404).json({ message: "No order found" });
@@ -97,18 +124,16 @@ export const getSellerOrder = async (req: Request, res: Response) => {
     const products: any[] = [];
     for (const order of orders) {
       for (const data of order.products) {
-
         const single_product = await Product.findOne({
           where: { productId: data.productId },
         });
-    if (single_product?.vendorId === vendorId) {
-      products.push(order);
-    }
+        if (single_product?.vendorId === vendorId) {
+          products.push(order);
+        }
       }
     }
- 
-    res.status(200).send(products);
 
+    res.status(200).send(products);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal error server" });

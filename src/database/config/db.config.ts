@@ -55,4 +55,5 @@ const connectSequelize: Sequelize = new Sequelize(
   }
 );
 
+
 export default connectSequelize;

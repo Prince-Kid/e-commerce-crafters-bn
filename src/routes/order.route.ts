@@ -3,21 +3,22 @@ import {
   getAllOrder,
   modifyOrderStatus,
   getOrder,
-  getSellerOrder,
-} from "../controllers/orderController";
 
+  getSellerOrder,
+
+  getAllOrders
+
+} from "../controllers/orderController";
 import { VerifyAccessToken } from "../middleware/verfiyToken";
 import {
   getOrderStatus,
   updateOrderStatus,
 } from "../controllers/orderStatus.controller";
-import { verifyAdmin } from "../middleware/verifyRole";
 
 const router = express.Router();
 
 router.put(
   "/order/:orderId/order-status",
-
   updateOrderStatus
 );
 
@@ -31,6 +32,10 @@ router.put(
 
 router.get("/order/getAllOrder", getAllOrder);
 router.get("/order/getOrder/:orderId", getOrder);
+
 router.get("/order/getSellerOrder/:vendorId", getSellerOrder);
+
+router.get("/orders", VerifyAccessToken, getAllOrders);
+
 
 export default router;
