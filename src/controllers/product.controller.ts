@@ -20,6 +20,8 @@ import { Op } from "sequelize";
 import { ParsedQs } from "qs";
 import Vendor from "../database/models/vendor";
 import { request } from "http";
+import { getProductById } from "../services/productService";
+import { fetchSimilarProducts } from "../services/productService";
 
 
 export const createProduct = async (req: Request, res: Response) => {
