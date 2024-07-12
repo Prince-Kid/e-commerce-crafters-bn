@@ -2,8 +2,6 @@ import { Request, Response } from "express";
 import Order from "../database/models/order";
 import Product from "../database/models/product";
 
-
-
 //Annual selling report for Vendor
 
 export const annualSellingReport = async (req: Request, res: Response) => {
@@ -52,8 +50,6 @@ export const annualSellingReport = async (req: Request, res: Response) => {
       .sort((a, b) => b.totalRevenue - a.totalRevenue)
       .slice(0, 5);
 
-    const currentMonth = new Date().getMonth();
-
     const monthlySales = Array(12).fill(0);
     for (const prod of products) {
       const month = prod.date.getMonth();
@@ -62,14 +58,14 @@ export const annualSellingReport = async (req: Request, res: Response) => {
 
     const formattedSales = monthlySales.map((totalSales, index) => {
       const commissionFee = 0.1;
-      const income = totalSales - totalSales * commissionFee;
+      const income = totalSales - (totalSales - totalSales * commissionFee);
       const currentYear = new Date().getFullYear();
       return {
         month: new Date(currentYear, index).toLocaleString("default", {
           month: "long",
         }),
-        totalSales: index <= currentMonth ? totalSales : 0,
-        income: index <= currentMonth ? income : 0,
+        totalSales,
+        income,
       };
     });
 
@@ -82,8 +78,6 @@ export const annualSellingReport = async (req: Request, res: Response) => {
     res.status(500).json({ error: error.message });
   }
 };
-
-
 
 //Annual selling report for Admin
 
@@ -116,7 +110,7 @@ export const overallAnnualSellingReport = async (
       }
     }
 
-//Finding top products
+    //Finding top products
     const productRevenueMap: {
       [key: string]: { productId: string; name: string; totalRevenue: number };
     } = {};
@@ -136,10 +130,8 @@ export const overallAnnualSellingReport = async (
     const topProducts = Object.values(productRevenueMap)
       .sort((a, b) => b.totalRevenue - a.totalRevenue)
       .slice(0, 4);
-    
-    //monthly total sales
 
-    const currentMonth = new Date().getMonth();
+    //monthly total sales
 
     const monthlySales = Array(12).fill(0);
     for (const prod of products) {
@@ -149,14 +141,14 @@ export const overallAnnualSellingReport = async (
 
     const formattedSales = monthlySales.map((totalSales, index) => {
       const commissionFee = 0.1;
-      const income = totalSales * commissionFee;
+      const income = totalSales - (totalSales - totalSales * commissionFee);
       const currentYear = new Date().getFullYear();
       return {
         month: new Date(currentYear, index).toLocaleString("default", {
           month: "long",
         }),
-        totalSales: index <= currentMonth ? totalSales : 0,
-        income: index <= currentMonth ? income : 0,
+        totalSales,
+        income,
       };
     });
 
@@ -170,7 +162,6 @@ export const overallAnnualSellingReport = async (
     res.status(500).json({ error: error.message });
   }
 };
-
 
 //weekly selling report for Vendor
 
@@ -191,6 +182,7 @@ export const WeeklySellingReport = async (req: Request, res: Response) => {
         if (single_product?.vendorId === vendorId) {
           products.push({
             productId: single_product.productId,
+            product: single_product.name,
             quantity: data.quantity,
             price: single_product.price,
             date: new Date(order.createdAt),
@@ -208,20 +200,33 @@ export const WeeklySellingReport = async (req: Request, res: Response) => {
       "Friday",
       "Saturday",
     ];
-    const currentDay = new Date().getDay();
+
+    const currentDate = new Date();
+    const currentDay = currentDate.getDay();
+
+    // Get the start and end date of the current week
+    const startOfWeek = new Date(currentDate);
+    startOfWeek.setDate(currentDate.getDate() - currentDay);
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const endOfWeek = new Date(currentDate);
+    endOfWeek.setDate(currentDate.getDate() + (6 - currentDay));
+    endOfWeek.setHours(23, 59, 59, 999);
+
     const dailySales = Array(7).fill(0);
 
     for (const prod of products) {
-      const day = prod.date.getDay();
-      dailySales[day] += prod.price * prod.quantity;
+      const prodDate = new Date(prod.date);
+      if (prodDate >= startOfWeek && prodDate <= endOfWeek) {
+        const day = prodDate.getDay();
+        dailySales[day] += prod.price * prod.quantity;
+      }
     }
 
-    const formattedSales = dailySales.map((totalSales, index) => {
-      return {
-        day: daysOfWeek[index],
-        totalSales: index <= currentDay ? totalSales : 0,
-      };
-    });
+    const formattedSales = dailySales.map((totalSales, index) => ({
+      day: daysOfWeek[index],
+      totalSales: index <= currentDay ? totalSales : 0,
+    }));
 
     res.status(200).json({ data: products, weeklySales: formattedSales });
   } catch (error: any) {
@@ -229,15 +234,16 @@ export const WeeklySellingReport = async (req: Request, res: Response) => {
   }
 };
 
-
 //weekly selling report for admin
 
-export const OverallWeeklySellingReport = async (req: Request, res: Response) => {
+export const OverallWeeklySellingReport = async (
+  req: Request,
+  res: Response
+) => {
   try {
-  
     const orders: any = await Order.findAll();
-    if (!orders) {
-      return res.status(404).json({ message: "No order found" });
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: "No orders found" });
     }
 
     const products: any[] = [];
@@ -256,6 +262,29 @@ export const OverallWeeklySellingReport = async (req: Request, res: Response) =>
       }
     }
 
+    // Calculate start and end of the current week (Monday to Sunday)
+    const currentDate = new Date();
+    const currentDay = currentDate.getDay();
+
+    const startOfWeek = new Date(currentDate);
+    startOfWeek.setDate(
+      currentDate.getDate() - currentDay + (currentDay === 0 ? -6 : 1)
+    );
+
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const dailySales = Array(7).fill(0);
+
+    for (const prod of products) {
+      const prodDate = new Date(prod.date);
+      if (prodDate >= startOfWeek && prodDate <= endOfWeek) {
+        const dayOfWeek = prodDate.getDay();
+        dailySales[dayOfWeek] += prod.price * prod.quantity;
+      }
+    }
 
     const daysOfWeek = [
       "Sunday",
@@ -266,20 +295,11 @@ export const OverallWeeklySellingReport = async (req: Request, res: Response) =>
       "Friday",
       "Saturday",
     ];
-    const currentDay = new Date().getDay();
-    const dailySales = Array(7).fill(0);
 
-    for (const prod of products) {
-      const day = prod.date.getDay();
-      dailySales[day] += prod.price * prod.quantity;
-    }
-
-    const formattedSales = dailySales.map((totalSales, index) => {
-      return {
-        day: daysOfWeek[index],
-        totalSales: index <= currentDay ? totalSales : 0,
-      };
-    });
+    const formattedSales = dailySales.map((totalSales, index) => ({
+      day: daysOfWeek[index],
+      totalSales: index <= currentDay ? totalSales : 0,
+    }));
 
     res.status(200).json({ data: products, weeklySales: formattedSales });
   } catch (error: any) {

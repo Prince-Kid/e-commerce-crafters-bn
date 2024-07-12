@@ -198,11 +198,9 @@ export const register = async (req: Request, res: Response) => {
                 <h1>Verfiy You Email</h1>
             </div>
             <div class="content">
-
-              <a class="link" href='${process.env.VERFIY_EMAIL_URL}?token=${token}'>
-
-              <span class="verify">Verify Email</span>
-              </a>
+             <a class="link" href='${process.env.VERFIY_EMAIL_URL}?token=${token}' target="_self">
+  <span class="verify">Verify Email</span>
+</a>
             </div>
             <div class="footer">
                 <p>&copy; 2024 crafters. All rights reserved.</p>
@@ -437,5 +435,38 @@ export const verifyEmail = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Verification link has expired" });
     }
     res.status(500).json({ message: error.message });
+  }
+};
+
+
+export const findUser = async (req: Request, res: Response) => {
+  const userId = req.params.id;
+  try {
+    const user = await User.findOne({ where: { userId: userId } });
+    res.status(200).json(user);
+  } catch (error: any) {
+    if (error.message === "user not found") {
+      res.status(404).json({ error: "User not found" });
+    } else {
+      res.status(500).json({ error: "Internal server error" });
+    }
+  }
+};
+
+export const allUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await User.findAll();
+    res.status(200).json(users);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const allVendors = async (req: Request, res: Response) => {
+  try {
+    const sellers = await User.findAll({ where: { role: "vendor" } });
+    res.status(200).json(sellers);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
   }
 };

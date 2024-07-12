@@ -3,8 +3,11 @@ import { twoFAController } from "./../middleware/2fa.middleware";
 import express,{Request,Response} from "express";
 import {
  Welcome,
+ allUsers,
+ allVendors,
  deleteUser,
  editUser,
+ findUser,
  login,
  register,
  updatePassword,
@@ -30,5 +33,9 @@ route.post("/addfeedback/:id", addFeedback);
 route.get("/getfeedback/:id", selectFeedback);
 
 route.get("/verfiy-email", verifyEmail);
+
+route.get("/finduser/:id", findUser);
+route.get("/allusers", allUsers);
+route.get("/allvendors", allVendors);
 
 export default route;

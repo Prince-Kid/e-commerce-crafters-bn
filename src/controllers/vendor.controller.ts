@@ -66,3 +66,13 @@ export const editVendor = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+
+export const allRequests = async (req: Request, res: Response) => {
+  try {
+    const sellers = await Vendor.findAll({ where: { status: "pending" } });
+    res.status(200).json(sellers);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};

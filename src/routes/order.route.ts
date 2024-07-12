@@ -3,6 +3,7 @@ import {
   getAllOrder,
   modifyOrderStatus,
   getOrder,
+  getSellerOrder,
 } from "../controllers/orderController";
 
 import { VerifyAccessToken } from "../middleware/verfiyToken";
@@ -30,5 +31,6 @@ router.put(
 
 router.get("/order/getAllOrder", getAllOrder);
 router.get("/order/getOrder/:orderId", getOrder);
+router.get("/order/getSellerOrder/:vendorId", getSellerOrder);
 
 export default router;
