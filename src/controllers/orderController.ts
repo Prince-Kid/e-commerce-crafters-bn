@@ -66,14 +66,33 @@ export const modifyOrderStatus = async (req: Request, res: Response) => {
 export const getAllOrders = async (req:Request, res: Response) => {
   try{
     const userId = (req as any).token.id;
-    const vendor = await findVendorByUserId(userId);
+    const vendorId = req.params.vendorId;
 
-    let orders;
+    let orders: any;
 
+    if(vendorId){
+      const allOrders: any = await Order.findAll({
+        include: [{ model: Product, as: 'products' }]
+      });
+
+      if(allOrders.length === 0){
+        return res.status(404).json({ message: "No orders found" });
+      }
+
+      orders = allOrders.filter(order =>
+        order.products.some(product => product.vendorId === vendorId)
+      )
+      
+       
+    } else {
       orders = await Order.findAll({ where: { userId }})
+
+    }
+    
     
     return res.status(200).json(orders);
   } catch(error: any){
+    console.error(error);
     return res.status(500).json({ error: error.message})
   }
 }
@@ -103,4 +122,31 @@ export const getOrder = async(req: Request, res: Response) => {
     return res.status(500).json({ error: err.message})
   }
 }
+
+export const getSellerOrder = async (req: Request, res: Response) => {
+  try {
+    const vendorId = req.params.vendorId;
+    const orders: any = await Order.findAll();
+    if (!orders) {
+      return res.status(404).json({ message: "No order found" });
+    }
+
+    const products: any[] = [];
+    for (const order of orders) {
+      for (const data of order.products) {
+        const single_product = await Product.findOne({
+          where: { productId: data.productId },
+        });
+        if (single_product?.vendorId === vendorId) {
+          products.push(order);
+        }
+      }
+    }
+
+    res.status(200).send(products);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal error server" });
+  }
+};
 
