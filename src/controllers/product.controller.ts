@@ -168,6 +168,7 @@ export const deleteProduct = async (req: Request, res: Response) => {
     const tokenData = (req as any).token;
     const productId = req.params.id;
     const { vendorId } = req.body;
+    console.log(productId)
 
     const permissionCheck: any = await checkVendorModifyPermission(
       tokenData,

@@ -12,7 +12,7 @@ module.exports = {
     `);
 
     const [products] = await queryInterface.sequelize.query(`
-      SELECT "productId", "name"
+      SELECT "productId", "name", "vendorId"
       FROM "Products"
       LIMIT 3;
     `);
@@ -32,7 +32,12 @@ module.exports = {
           // @ts-ignore
           productId: product.productId,
           // @ts-ignore
-          productName: product.name
+          productName: product.name,
+          // @ts-ignore
+          vendorId: product.vendorId,
+          status: "pending",
+
+
         }]),
         createdAt: new Date(),
         updatedAt: new Date()
