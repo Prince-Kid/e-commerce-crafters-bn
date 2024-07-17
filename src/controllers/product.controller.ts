@@ -2,8 +2,6 @@ import { Request, Response } from "express";
 
 import { saveProduct, searchProducts, getAllProducts, getProductById, fetchSimilarProducts } from "../services/productService";
 import Product from "../database/models/product";
-import CartItem from "../database/models/cartitem";
-
 import { checkVendorModifyPermission, checkVendorPermission } from "../services/PermisionService";
 import { PRODUCT_ADDED, PRODUCT_REMOVED, PRODUCT_UPDATED, productLifecycleEmitter } from "../helpers/events";
 import Vendor from "../database/models/vendor";
@@ -33,6 +31,7 @@ export const createProduct = async (req: Request, res: Response) => {
       category,
       expiringDate,
     } = req.body;
+    console.log(image)
     if (!name || !image || !description || !price || !quantity || !category) {
       return res.status(200).json("All Field are required");
     }
@@ -41,11 +40,11 @@ export const createProduct = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Exactly 4 images are required" });
     }
 
-    const imageArray: string[] = image;
+
 
     const data = {
       name,
-      images: imageArray,
+      image: image,
       description,
       discount: discount ? discount : 0,
       price,
