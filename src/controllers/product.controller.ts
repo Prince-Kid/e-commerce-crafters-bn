@@ -1,22 +1,11 @@
 import { Request, Response } from "express";
-import {
-  saveProduct,
-  searchProducts,
-  getAllProducts,
-} from "../services/productService";
+
+import { saveProduct, searchProducts, getAllProducts, getProductById, fetchSimilarProducts } from "../services/productService";
 import Product from "../database/models/product";
-import {
-  checkVendorModifyPermission,
-  checkVendorPermission,
-} from "../services/PermisionService";
-import {
-  PRODUCT_ADDED,
-  PRODUCT_REMOVED,
-  PRODUCT_UPDATED,
-  productLifecycleEmitter,
-} from "../helpers/events";
-import { Op } from "sequelize";
-import { ParsedQs } from "qs";
+import CartItem from "../database/models/cartitem";
+
+import { checkVendorModifyPermission, checkVendorPermission } from "../services/PermisionService";
+import { PRODUCT_ADDED, PRODUCT_REMOVED, PRODUCT_UPDATED, productLifecycleEmitter } from "../helpers/events";
 import Vendor from "../database/models/vendor";
 import { request } from "http";
 import CartItem from "../database/models/cartitem";
@@ -47,9 +36,16 @@ export const createProduct = async (req: Request, res: Response) => {
     if (!name || !image || !description || !price || !quantity || !category) {
       return res.status(200).json("All Field are required");
     }
+
+    if (!Array.isArray(image) || image.length !== 4) {
+      return res.status(400).json({ message: "Exactly 4 images are required" });
+    }
+
+    const imageArray: string[] = image;
+
     const data = {
       name,
-      image,
+      images: imageArray,
       description,
       discount: discount ? discount : 0,
       price,
@@ -62,6 +58,7 @@ export const createProduct = async (req: Request, res: Response) => {
     if (!save) {
       return res.status(500).json({ error: "Failed to save data" });
     }
+
     productLifecycleEmitter.emit(PRODUCT_ADDED, data);
 
     return res.status(201).json({ message: "Product Created", data: save });
@@ -88,6 +85,31 @@ export const readProduct = async (req: Request, res: Response) => {
   }
 };
 
+export const similarProducts = async (req: Request, res: Response) => {
+  try {
+    const productId = req.params.id;
+    const product = await getProductById(productId);
+
+    if (!product) {
+
+      return res.status(404).json({ error: "Product not found" });
+    }
+ console.log("hhhhhggggggggghhhhh",product)
+    const category = product.category;
+    const similarProducts = await fetchSimilarProducts(productId, category);
+
+    if (similarProducts.length === 0) {
+      return res.status(404).json({ error: "No similar products found" });
+    }
+    console.log("hhhhhhhhhh",similarProducts)
+
+    return res.status(200).json(similarProducts);
+    
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 // delete product
 export const readAllProducts = async (req: Request, res: Response) => {
   try {
@@ -105,6 +127,7 @@ export const readAllProducts = async (req: Request, res: Response) => {
     return res.status(500).json({ error: error.message });
   }
 };
+
 
 export const searchProduct = async (req: Request, res: Response) => {
   try {
@@ -223,26 +246,27 @@ export const viewProducts = async (req: Request, res: Response) => {
   }
 };
 
+//get popular products
+
 export const getPopularProduct = async (req: Request, res: Response) => {
   try {
-    const products = await Product.findAll({ include: { model: CartItem, as: "CartItem" } });
-    if(!products){
+    const products = await Product.findAll({
+      include: { model: CartItem, as: "CartItem" },
+    });
+    if (!products) {
       res.status(404).json({ message: "No products found" });
     }
-    for( let i = 0 ; i<= products.length ; i++){
-       for(let b= i+1; b<=products.length;b++){
-        if(products[i]?.CartItem?.length < products[b]?.CartItem?.length){
+    for (let i = 0; i <= products.length; i++) {
+      for (let b = i + 1; b <= products.length; b++) {
+        if (products[i]?.CartItem?.length < products[b]?.CartItem?.length) {
           let temp = products[i];
           products[i] = products[b];
           products[b] = temp;
         }
-       }
+      }
     }
     res.status(200).json(products);
-  } catch (error:any) {
-    res.status(500).json({ message: error.message});
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
   }
 };
-
-
-

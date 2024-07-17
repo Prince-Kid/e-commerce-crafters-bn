@@ -45,7 +45,7 @@ export const login = async (req: ExtendedRequest, res: Response) => {
       const email = req.session.email || req.body.email;
       const password = req.session.password || req.body.password;
 
-      const existUser = await loginFunc({ email, password });
+      const { existUser, vendorId } = await loginFunc({ email, password });
       if (!existUser) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -69,7 +69,7 @@ export const login = async (req: ExtendedRequest, res: Response) => {
       return res.status(200).json({
         message: "Login successful",
         token,
-        user: existUser,
+        user: existUser,vendorId
       });
     } catch (error) {
       console.error(error);
@@ -198,9 +198,11 @@ export const register = async (req: Request, res: Response) => {
                 <h1>Verfiy You Email</h1>
             </div>
             <div class="content">
+
              <a class="link" href='${process.env.VERFIY_EMAIL_URL}?token=${token}' target="_self">
   <span class="verify">Verify Email</span>
 </a>
+
             </div>
             <div class="footer">
                 <p>&copy; 2024 crafters. All rights reserved.</p>
@@ -437,3 +439,15 @@ export const verifyEmail = async (req: Request, res: Response) => {
     res.status(500).json({ message: error.message });
   }
 };
+export const getUserInfo = async(req: Request, res: Response) => {
+  try{
+   const userId = req.params.id;
+   const user = await User.findByPk(userId);
+   if(!user){
+     return res.status(404).json({ error: "User not found"});
+   }
+   return res.status(200).json(user);
+  } catch(error: any){
+   return res.status(500).json({ error: error.message});
+  }
+ }
