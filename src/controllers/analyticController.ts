@@ -22,6 +22,7 @@ export const annualSellingReport = async (req: Request, res: Response) => {
           products.push({
             productId: single_product.productId,
             name: single_product.name,
+            image: single_product.image[0],
             quantity: data.quantity,
             price: single_product.price,
             date: new Date(order.createdAt),
@@ -31,7 +32,12 @@ export const annualSellingReport = async (req: Request, res: Response) => {
     }
 
     const productRevenueMap: {
-      [key: string]: { productId: string; name: string; totalRevenue: number };
+      [key: string]: {
+        productId: string;
+        image: string;
+        name: string;
+        totalRevenue: number;
+      };
     } = {};
 
     for (const prod of products) {
@@ -39,6 +45,7 @@ export const annualSellingReport = async (req: Request, res: Response) => {
         productRevenueMap[prod.productId] = {
           productId: prod.productId,
           name: prod.name,
+          image: prod.image,
           totalRevenue: 0,
         };
       }
@@ -102,6 +109,7 @@ export const overallAnnualSellingReport = async (
           products.push({
             productId: data.productId,
             name: single_product.name,
+            image: single_product.image[0],
             quantity: data.quantity,
             price: single_product.price,
             date: new Date(order.createdAt),
@@ -112,7 +120,12 @@ export const overallAnnualSellingReport = async (
 
     //Finding top products
     const productRevenueMap: {
-      [key: string]: { productId: string; name: string; totalRevenue: number };
+      [key: string]: {
+        productId: string;
+        name: string;
+        image: string;
+        totalRevenue: number;
+      };
     } = {};
 
     for (const prod of products) {
@@ -120,6 +133,7 @@ export const overallAnnualSellingReport = async (
         productRevenueMap[prod.productId] = {
           productId: prod.productId,
           name: prod.name,
+          image: prod.image,
           totalRevenue: 0,
         };
       }
@@ -256,6 +270,7 @@ export const OverallWeeklySellingReport = async (
         products.push({
           productId: data.productId,
           quantity: data.quantity,
+          name: single_product?.name,
           price: single_product?.price,
           date: new Date(order.createdAt),
         });

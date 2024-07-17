@@ -5,6 +5,8 @@ import { findVendorByUserId } from "../services/orderStatus";
 import Vendor from "../database/models/vendor";
 
 import Product from "../database/models/product";
+import User from "../database/models/user";
+import { userInfo } from "os";
 
 const allowedStatuses = ["pending", "delivered", "cancelled"];
 
