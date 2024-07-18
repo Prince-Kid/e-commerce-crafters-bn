@@ -130,3 +130,22 @@ export const vendorOrder = async (req: Request, res: Response) => {
       res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+export const allRequests = async (req: Request, res: Response) => {
+  try {
+    const sellers = await Vendor.findAll({where: {status: 'pending'}})
+    res.status(200).json(sellers);
+  } catch (error: any) {
+      res.status(500).json({ error: error.message });
+  }
+}
+
+export const allStores = async (req: Request, res: Response) => {
+  try {
+    const stores = await Vendor.findAll({ where: { status: 'approved' } })
+    res.status(200).json(stores)
+    
+  } catch (error:any) {
+    res.status(500).json({error: error.message})
+  }
+}

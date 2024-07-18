@@ -14,6 +14,10 @@ class CartItem extends Model {
       foreignKey: "cartId",
       as: "cart",
     });
+    CartItem.belongsTo(models.Product,{
+      foreignKey: "productId",
+      as:"Product"
+    })
   }
   static initModel(sequelize: Sequelize) {
     CartItem.init(

@@ -18,8 +18,9 @@ export const approveVendor = async (req: Request, res: Response) => {
 // Reject Vendor's Request
 export const rejectVendor = async (req: Request, res: Response) => {
   const { userId } = req.params;
+  const { message } = req.body; 
   try {
-    const result = await rejectVendorRequest(userId);
+    const result = await rejectVendorRequest(userId, message);
     res.status(result.status).json({ message: result.message });
   } catch (error) {
     return res.status(500).json({ message: "Internal Server Error", error });

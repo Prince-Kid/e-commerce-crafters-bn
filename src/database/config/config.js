@@ -4,12 +4,7 @@ const config = {
   development: {
     url: process.env.DATABASE_DEVELOPMENT_URL,
     dialect: "postgres",
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: true,
-      }
-    }
+
   },
   test: {
     url: process.env.DATABASE_TEST_URL,

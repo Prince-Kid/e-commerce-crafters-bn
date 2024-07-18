@@ -238,6 +238,41 @@ export const deleteUser = async (req: Request, res: Response) => {
   }
 };
 
+
+export const findUser = async (req: Request, res: Response) => {
+  const userId = req.params.id;
+  try {
+    const user = await User.findOne({where: {userId: userId}});
+    res.status(200).json(user);
+  } catch (error: any) {
+    if (error.message === "user not found") {
+      res.status(404).json({ error: "User not found" });
+    } else {
+      res.status(500).json({ error: "Internal server error" });
+    }
+  }
+};
+
+export const allUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await User.findAll()
+    res.status(200).json(users);
+  } catch (error: any) {
+      res.status(500).json({ error: error.message });
+  }
+}
+
+
+export const allVendors = async (req: Request, res: Response) => {
+  try {
+    const sellers = await User.findAll({where: {role: 'vendor'}})
+    res.status(200).json(sellers);
+  } catch (error: any) {
+      res.status(500).json({ error: error.message });
+  }
+}
+
+
 export const editUser = async (req: Request, res: Response) => {
   const { name, email, profile } = req.body;
   const userId = req.params.id;

@@ -3,6 +3,14 @@ import User from "../database/models/user";
 
 import nodemailer from "nodemailer";
 
+
+function toCapital(string: string): string {
+  return string
+    .split(" ")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(" ");
+}
+
 export const approveVendorRequest = async (userId: string) => {
   const vendor = await Vendor.findOne({ where: { userId: userId } });
   const user: any = await User.findOne({ where: { userId: userId } });
@@ -93,7 +101,7 @@ export const approveVendorRequest = async (userId: string) => {
                   <h1>Vendor Request Approved</h1>
               </div>
               <div class="content">
-                  <h2>Hello ${user.name},</h2>
+                  <h2>Hello ${toCapital(user.name)},</h2>
                   <p>We are excited to inform you that your request to become a vendor has been approved!</p>
                   <p>You can now start listing your products and take advantage of our vendor features.</p>
                   <a href="www.gurisha.com" class="button"><span>Get Started</span></a>
@@ -116,7 +124,7 @@ export const approveVendorRequest = async (userId: string) => {
   }
 };
 
-export const rejectVendorRequest = async (userId: string) => {
+export const rejectVendorRequest = async (userId: string,  message: string) => {
   const vendor = await Vendor.findOne({ where: { userId: userId } });
   const user: any = await User.findOne({ where: { userId: userId } });
 
@@ -206,9 +214,10 @@ export const rejectVendorRequest = async (userId: string) => {
                   <h1>Vendor Request Rejected</h1>
               </div>
               <div class="content">
-              <h2>Hello ${user.name},</h2>
+              <h2>Hello ${toCapital(user.name)},</h2>
               <p>We regret to inform you that your request to become a vendor has been rejected.</p>
-              <p>Unfortunately, we are unable to approve your application at this time. Please feel free to reach out to our support team if you have any questions or require further information.</p>
+              <p>Unfortunately, we are unable to approve your application at this time because <strong>${message.toLowerCase()}</strong>.</p>
+              <p> Please feel free to reach out to our support team if you have any questions or require further information.</p>
               <p>Thank you for your understanding.</p>
               <p>Best regards,<br>Crafter Team</p>
               </div>

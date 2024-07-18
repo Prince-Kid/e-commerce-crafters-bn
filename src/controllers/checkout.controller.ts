@@ -6,7 +6,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 export const createOrder = async (req: Request, res: Response) => {
-    const { userId, deliveryAddress, paymentMethod } = req.body;
+    const { userId, deliveryAddress, paymentMethod,client } = req.body;
+
     if(!userId || !deliveryAddress || !paymentMethod) {
         return res.status(400).json({ message: 'All fields are required' })
     }
@@ -29,6 +30,7 @@ export const createOrder = async (req: Request, res: Response) => {
         }));
 
         const totalAmount = orderItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+        console.log(orderItems)
 
         const order = await Order.create({
             orderId: uuidv4(),
@@ -37,7 +39,8 @@ export const createOrder = async (req: Request, res: Response) => {
             paymentMethod,
             status: 'pending', 
             products: orderItems,
-            totalAmount: totalAmount
+            totalAmount: totalAmount,
+            client
         });
         await CartItem.destroy({ where: { cartId: cart.cartId } });
         res.status(201).json({ message: 'Order placed successfully', order });

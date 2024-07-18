@@ -3,8 +3,11 @@ import { twoFAController } from "./../middleware/2fa.middleware";
 import express,{Request,Response} from "express";
 import {
  Welcome,
+ allUsers,
+ allVendors,
  deleteUser,
  editUser,
+ findUser,
  login,
  register,
  updatePassword,
@@ -20,6 +23,9 @@ const route = express.Router();
 
 route.get("/", Welcome);
 
+route.get("/finduser/:id", findUser)
+route.get("/allusers", allUsers)
+route.get("/allvendors", allVendors)
 route.post("/register", register);
 route.patch("/updateuser/:id", editUser);
 route.patch("/updatepassword/:id", updatePassword);
@@ -32,5 +38,9 @@ route.get("/getfeedback/:id", selectFeedback);
 
 route.get("/verfiy-email", verifyEmail);
 route.get("/user-info/:id", getUserInfo);
+
+route.get("/finduser/:id", findUser);
+route.get("/allusers", allUsers);
+route.get("/allvendors", allVendors);
 
 export default route;
