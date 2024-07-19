@@ -69,17 +69,38 @@ export const modifyOrderStatus = async (req: Request, res: Response) => {
 export const getAllOrders = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).token.id;
-    const vendor = await findVendorByUserId(userId);
+    const vendorId = req.params.vendorId;
 
-    let orders;
+    let orders: any;
 
-    orders = await Order.findAll({ where: { userId }})
+    if(vendorId){
+      const allOrders: any = await Order.findAll({
+        include: [{ model: Product, as: 'products' }]
+      });
 
+      if(allOrders.length === 0){
+        return res.status(404).json({ message: "No orders found" });
+      }
+
+      orders = allOrders.filter(order =>
+        order.products.some(product => product.vendorId === vendorId)
+      )
+      
+       
+    } else {
+      orders = await Order.findAll({ where: { userId }})
+
+    }
+    
+    
     return res.status(200).json(orders);
-  } catch (error: any) {
-    return res.status(500).json({ error: error.message });
+  } catch(error: any){
+    console.error(error);
+    return res.status(500).json({ error: error.message})
   }
-};
+}
+
+
 
 export const getAllOrder = async (req: Request, res: Response) => {
   try {

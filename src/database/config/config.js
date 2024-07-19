@@ -8,8 +8,8 @@ const config = {
       ssl: {
         require: true,
         rejectUnauthorized: true,
-      }
-    }
+      },
+    },
   },
   test: {
     url: process.env.DATABASE_TEST_URL,
@@ -18,8 +18,8 @@ const config = {
       ssl: {
         require: true,
         rejectUnauthorized: true,
-      }
-    }
+      },
+    },
   },
   production: {
     url: process.env.DATABASE_PRODUCTION_URL,
@@ -28,12 +28,9 @@ const config = {
       ssl: {
         require: true,
         rejectUnauthorized: true,
-      }
-    }
+      },
+    },
   },
 };
 
 module.exports = config;
-
-
-
