@@ -57,6 +57,7 @@ app.use(cors({
   credentials: true 
 }
 ));
+
 app.use(cookieParser());
 app.use((req, res, next) => {
   if (req.originalUrl === '/webhook') {
@@ -103,14 +104,10 @@ app.use("/admin", adminRoute);
 app.use("/", cartroute);
 app.use("/", wishlistroute);
 app.use("/", TwoFaRoute);
-
 app.use("/", chatRouter);
-
 app.use('/', messageRoutes);
 app.use("/", messageRoutes);
-
 app.use("/", analyticRoute);
-
 
 
 cron.schedule("0 0 * * *", () => {
