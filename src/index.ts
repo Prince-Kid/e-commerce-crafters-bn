@@ -51,12 +51,12 @@ ioServer.on("connection", (socket) => {
   });
 });
 
-
-app.use(cors({
-  origin: process.env.CORS_ORIGIN_URL, 
-  credentials: true 
-}
-));
+app.use(
+  cors({
+    origin: process.env.CORS_ORIGIN_URL,
+    credentials: true,
+  })
+);
 
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
@@ -97,11 +97,18 @@ app.use("/admin", adminRoute);
 app.use("/", cartroute);
 app.use("/", wishlistroute);
 app.use("/", TwoFaRoute);
-app.use("/", chatRouter);
-app.use('/', messageRoutes);
+
+
+app.use("/", messageRoutes);
+
+
+// app.use("/", chatRouter);
+// app.use('/', messageRoutes);
+
 app.use("/", messageRoutes);
 app.use("/", analyticRoute);
 
+app.use("/", chatRouter);
 
 cron.schedule("0 0 * * *", () => {
   checkExpiredProducts();
