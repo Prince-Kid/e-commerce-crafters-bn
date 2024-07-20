@@ -167,7 +167,6 @@ export const sales_products = async (req: Request, res: Response) => {
         }
       }
     }
-
     return res.status(200).json({ product: product_purchase });
   } catch (error:any) {
     return res.status(500).json({ message: error.message });

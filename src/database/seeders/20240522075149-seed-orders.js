@@ -12,7 +12,8 @@ module.exports = {
     `);
 
     const [products] = await queryInterface.sequelize.query(`
-      SELECT "productId","name","image","price"  FROM "Products"
+      SELECT "productId", "name", "vendorId"
+      FROM "Products"
       LIMIT 3;
     `);
 

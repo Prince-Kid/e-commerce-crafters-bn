@@ -47,6 +47,7 @@ export const createProduct = async (req: Request, res: Response) => {
       category,
       expiringDate,
     } = req.body;
+    console.log(image)
     if (!name || !image || !description || !price || !quantity || !category) {
       return res.status(200).json("All Field are required");
     }
@@ -55,11 +56,11 @@ export const createProduct = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Exactly 4 images are required" });
     }
 
-    const imageArray: string[] = image;
+
 
     const data = {
       name,
-      images: imageArray,
+      image: image,
       description,
       discount: discount ? discount : 0,
       price,
@@ -205,6 +206,7 @@ export const deleteProduct = async (req: Request, res: Response) => {
     const tokenData = (req as any).token;
     const productId = req.params.id;
     const { vendorId } = req.body;
+    console.log(productId)
 
     const permissionCheck: any = await checkVendorModifyPermission(
       tokenData,
