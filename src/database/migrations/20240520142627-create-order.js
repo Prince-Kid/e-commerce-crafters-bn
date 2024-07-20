@@ -20,6 +20,10 @@ module.exports = {
         },
         onDelete: "CASCADE",
       },
+      client: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
       paymentMethod: {
         type: Sequelize.STRING,
         allowNull: false,

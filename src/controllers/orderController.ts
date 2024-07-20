@@ -1,7 +1,12 @@
 import { Request, Response } from "express";
 import Order from "../database/models/order";
 import { findVendorByUserId } from "../services/orderStatus";
+
+import Vendor from "../database/models/vendor";
+
 import Product from "../database/models/product";
+import User from "../database/models/user";
+import { userInfo } from "os";
 
 const allowedStatuses = ["pending", "delivered", "cancelled"];
 
@@ -61,10 +66,8 @@ export const modifyOrderStatus = async (req: Request, res: Response) => {
   }
 };
 
-
-
-export const getAllOrders = async (req:Request, res: Response) => {
-  try{
+export const getAllOrders = async (req: Request, res: Response) => {
+  try {
     const userId = (req as any).token.id;
     const vendorId = req.params.vendorId;
 
@@ -95,8 +98,7 @@ export const getAllOrders = async (req:Request, res: Response) => {
     console.error(error);
     return res.status(500).json({ error: error.message})
   }
-}
-
+};
 
 export const getAllOrder = async (req: Request, res: Response) => {
   try {
@@ -109,19 +111,26 @@ export const getAllOrder = async (req: Request, res: Response) => {
   }
 };
 
-export const getOrder = async(req: Request, res: Response) => {
-  try{
-    
+export const getOrder = async (req: Request, res: Response) => {
+  try {
     const orderId: string = req.params.orderId;
     const order = await Order.findByPk(orderId);
-    if (!order){
-      return res.status(404).json({ error: "Order not found"});
+    if (!order) {
+      return res.status(404).json({ error: "Order not found" });
     }
     return res.status(200).json(order);
-  } catch(err: any){
-    return res.status(500).json({ error: err.message})
+  } catch (err: any) {
+    return res.status(500).json({ error: err.message });
   }
-}
+};
+
+export const getSellerOrder = async (req: Request, res: Response) => {
+  try {
+    const vendorId = req.params.vendorId;
+    const orders: any = await Order.findAll();
+    if (!orders) {
+      return res.status(404).json({ message: "No order found" });
+    }
 
 export const getSellerOrder = async (req: Request, res: Response) => {
   try {
@@ -149,4 +158,3 @@ export const getSellerOrder = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal error server" });
   }
 };
-

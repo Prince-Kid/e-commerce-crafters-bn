@@ -33,7 +33,6 @@ const connectSequelize: Sequelize = new Sequelize(getURL(), {
   logging: false,
 });
 
-
 export default connectSequelize;
 
 

@@ -39,4 +39,8 @@ route.get("/getfeedback/:id", selectFeedback);
 route.get("/verfiy-email", verifyEmail);
 route.get("/user-info/:id", getUserInfo);
 
+route.get("/finduser/:id", findUser);
+route.get("/allusers", allUsers);
+route.get("/allvendors", allVendors);
+
 export default route;

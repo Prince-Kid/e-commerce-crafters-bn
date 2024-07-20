@@ -71,6 +71,7 @@ export const getCart = async (req: Request, res: Response) => {
       as: "Product"
     } });
 
+
     return res.status(200).json({ cartitem });
   } catch (error: any) {
     console.log(error);
