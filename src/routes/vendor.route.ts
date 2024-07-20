@@ -1,6 +1,7 @@
 import express from "express"
 const route = express.Router()
-import { allRequests, allStores, deletingVendor, editVendor,selectVendorInfo,vendorOrder, registerVendor } from "../controllers/vendor.controller"
+
+import { allRequests, allStores, deletingVendor, editVendor, registerVendor,selectVendorInfo, vendorOrder } from "../controllers/vendor.controller"
 import { viewProducts } from "../controllers/product.controller"
 import { VerifyAccessToken } from "../middleware/verfiyToken"
 import { selectFeedback, selectReview, view_vendor_feedback } from "../controllers/review.controller"

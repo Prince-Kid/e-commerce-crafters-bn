@@ -7,7 +7,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const createOrder = async (req: Request, res: Response) => {
     const { userId, deliveryAddress, paymentMethod,client } = req.body;
-
     if(!userId || !deliveryAddress || !paymentMethod) {
         return res.status(400).json({ message: 'All fields are required' })
     }

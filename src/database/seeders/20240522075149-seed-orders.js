@@ -13,6 +13,7 @@ module.exports = {
 
     const [products] = await queryInterface.sequelize.query(`
       SELECT "productId","name","image","price"  FROM "Products"
+
       LIMIT 3;
     `);
 

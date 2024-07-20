@@ -25,6 +25,7 @@ class Order extends Model {
         client: { type: DataTypes.STRING, allowNull: false },
         paymentMethod: { type: DataTypes.INTEGER, allowNull: false },
         status: { type: DataTypes.STRING, allowNull: false },
+        client: { type: DataTypes.STRING, allowNull: false },
         products: { type: DataTypes.JSONB, allowNull: false },
         totalAmount: { type: DataTypes.INTEGER, allowNull: false },
         expectedDeliveryDate: { type: DataTypes.DATE, allowNull: true },
