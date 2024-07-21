@@ -1,46 +1,43 @@
-
-
-import express,{Request,Response} from "express";
+import express from 'express';
 import {
- Welcome,
- allUsers,
- allVendors,
- deleteUser,
- editUser,
- findUser,
- login,
- register,
- updatePassword,
- verifyEmail,
- getUserInfo
-} from "../controllers/user.controller";
+  Welcome,
+  allUsers,
+  allVendors,
+  deleteUser,
+  editUser,
+  findUser,
+  login,
+  register,
+  updatePassword,
+  verifyEmail,
+  getUserInfo
+} from '../controllers/user.controller';
 
-import { VerifyAccessToken } from "../middleware/verfiyToken";
+import { VerifyAccessToken } from '../middleware/verfiyToken';
+import { addFeedback, addReview, selectFeedback } from '../controllers/review.controller';
 
-import { addFeedback, addReview, selectFeedback } from "../controllers/review.controller";
+const router = express.Router();
 
-const route = express.Router();
+// Route definitions
+router.get('/', Welcome);
 
-route.get("/", Welcome);
+router.get('/finduser/:id', findUser);
+router.get('/allusers', allUsers);
+router.get('/allvendors', allVendors);
 
-route.get("/finduser/:id", findUser)
-route.get("/allusers", allUsers)
-route.get("/allvendors", allVendors)
-route.post("/register", register);
-route.patch("/updateuser/:id", editUser);
-route.patch("/updatepassword/:id", updatePassword);
-route.delete("/deleteuser/:id", VerifyAccessToken, deleteUser);
-route.post("/login", login);
-route.post("/addreview/:id", addReview);
-route.post("/addfeedback/:id", addFeedback);
+router.post('/register', register);
+router.patch('/updateuser/:id', editUser);
+router.patch('/updatepassword/:id', updatePassword);
 
-route.get("/getfeedback/:id", selectFeedback);
+router.delete('/deleteuser/:id', VerifyAccessToken, deleteUser);
 
-route.get("/verfiy-email", verifyEmail);
-route.get("/user-info/:id", getUserInfo);
+router.post('/login', login);
+router.post('/addreview/:id', addReview);
+router.post('/addfeedback/:id', addFeedback);
 
-route.get("/finduser/:id", findUser);
-route.get("/allusers", allUsers);
-route.get("/allvendors", allVendors);
+router.get('/getfeedback/:id', selectFeedback);
 
-export default route;
+router.get('/verfiy-email', verifyEmail);
+router.get('/user-info/:id', getUserInfo);
+
+export default router;

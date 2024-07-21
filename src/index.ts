@@ -23,7 +23,7 @@ import roleRoute from "./routes/roles.route";
 import checkoutRoute from "./routes/checkout.router";
 import googleAuthRoute from "./routes/googleAuth.route";
 import cartroute from "./routes/cart.route";
-import TwoFaRoute from "./routes/2fa.route";
+// import TwoFaRoute from "./routes/2fa.route";
 import orderRoute from "./routes/order.route";
 import messageRoutes from "./routes/messages.route";
 
@@ -103,7 +103,7 @@ app.use("/api-docs", swaggerRoute);
 app.use("/admin", adminRoute);
 app.use("/", cartroute);
 app.use("/", wishlistroute);
-app.use("/", TwoFaRoute);
+// app.use("/", TwoFaRoute);
 
 
 app.use("/", messageRoutes);
