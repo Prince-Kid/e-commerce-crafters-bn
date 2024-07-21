@@ -1,4 +1,4 @@
-import { twoFAController } from "./../middleware/2fa.middleware";
+
 
 import express,{Request,Response} from "express";
 import {
@@ -30,7 +30,7 @@ route.post("/register", register);
 route.patch("/updateuser/:id", editUser);
 route.patch("/updatepassword/:id", updatePassword);
 route.delete("/deleteuser/:id", VerifyAccessToken, deleteUser);
-route.post("/login", twoFAController, login);
+route.post("/login", login);
 route.post("/addreview/:id", addReview);
 route.post("/addfeedback/:id", addFeedback);
 
