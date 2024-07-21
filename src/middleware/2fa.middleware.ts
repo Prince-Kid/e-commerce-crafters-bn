@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { Session } from "express-session";
-import { generate2FACode } from "../services/2fa.service";
-import { verify2FACode } from "../services/2fa.service";
+import { generate2FACode, verify2FACode } from "../services/2fa.service";
 
+// Extend the Session interface
 interface ExtendedSession extends Session {
   email?: string;
   password?: string;
@@ -11,14 +11,19 @@ interface ExtendedSession extends Session {
   twoFAError?: string;
 }
 
+// Extend the Request interface
+interface ExtendedRequest extends Request {
+  session: ExtendedSession;
+}
+
 export const twoFAController = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction
 ) => {
   const { email, password } = req.body;
   const twoFactorData = await generate2FACode(req.body);
-  const extSession = req.session as ExtendedSession;
+  const extSession = req.session;
 
   if (twoFactorData) {
     extSession.twoFactorCode = twoFactorData.twoFactorCode;
@@ -34,11 +39,11 @@ export const twoFAController = async (
 };
 
 export const verifyCode = async (
-  req: Request,
+  req: ExtendedRequest,
   res: Response,
   next: NextFunction
 ) => {
-  const extendedSession = req.session as ExtendedSession;
+  const extendedSession = req.session;
   const { code } = req.body;
 
   const sessionCode = extendedSession.twoFactorCode;
