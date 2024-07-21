@@ -29,6 +29,7 @@ export const createOrder = async (req: Request, res: Response) => {
         }));
 
         const totalAmount = orderItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+        console.log(orderItems)
 
         const order = await Order.create({
             orderId: uuidv4(),

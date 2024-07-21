@@ -22,7 +22,7 @@ module.exports = {
       },
       client: {
         type: Sequelize.STRING,
-        allowNull: false,
+        allowNull: true,
       },
       paymentMethod: {
         type: Sequelize.STRING,

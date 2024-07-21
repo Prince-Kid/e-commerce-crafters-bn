@@ -34,9 +34,3 @@ const config = {
 };
 
 module.exports = config;
-<<<<<<< HEAD
-
-
-
-=======
->>>>>>> 0cff03db707fc42c5a1f30a76827dea013e4c413
