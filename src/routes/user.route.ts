@@ -1,43 +1,44 @@
-import express from 'express';
+import express,{Request,Response} from "express";
 import {
-  Welcome,
-  allUsers,
-  allVendors,
-  deleteUser,
-  editUser,
-  findUser,
-  login,
-  register,
-  updatePassword,
-  verifyEmail,
-  getUserInfo
-} from '../controllers/user.controller';
+ Welcome,
+ allUsers,
+ allVendors,
+ deleteUser,
+ editUser,
+ findUser,
+ login,
+ register,
+ updatePassword,
+ verifyEmail,
+ getUserInfo
+} from "../controllers/user.controller";
 
-import { VerifyAccessToken } from '../middleware/verfiyToken';
-import { addFeedback, addReview, selectFeedback } from '../controllers/review.controller';
+import { VerifyAccessToken } from "../middleware/verfiyToken";
 
-const router = express.Router();
+import { addFeedback, addReview, selectFeedback } from "../controllers/review.controller";
 
-// Route definitions
-router.get('/', Welcome);
+const route = express.Router();
 
-router.get('/finduser/:id', findUser);
-router.get('/allusers', allUsers);
-router.get('/allvendors', allVendors);
+route.get("/", Welcome);
 
-router.post('/register', register);
-router.patch('/updateuser/:id', editUser);
-router.patch('/updatepassword/:id', updatePassword);
+route.get("/finduser/:id", findUser)
+route.get("/allusers", allUsers)
+route.get("/allvendors", allVendors)
+route.post("/register", register);
+route.patch("/updateuser/:id", editUser);
+route.patch("/updatepassword/:id", updatePassword);
+route.delete("/deleteuser/:id", VerifyAccessToken, deleteUser);
+route.post("/login", login);
+route.post("/addreview/:id", addReview);
+route.post("/addfeedback/:id", addFeedback);
 
-router.delete('/deleteuser/:id', VerifyAccessToken, deleteUser);
+route.get("/getfeedback/:id", selectFeedback);
 
-router.post('/login', login);
-router.post('/addreview/:id', addReview);
-router.post('/addfeedback/:id', addFeedback);
+route.get("/verfiy-email", verifyEmail);
+route.get("/user-info/:id", getUserInfo);
 
-router.get('/getfeedback/:id', selectFeedback);
+route.get("/finduser/:id", findUser);
+route.get("/allusers", allUsers);
+route.get("/allvendors", allVendors);
 
-router.get('/verfiy-email', verifyEmail);
-router.get('/user-info/:id', getUserInfo);
-
-export default router;
+export default route;
