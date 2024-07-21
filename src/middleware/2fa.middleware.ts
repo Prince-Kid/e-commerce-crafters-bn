@@ -1,8 +1,7 @@
-import { Request, Response, NextFunction } from "express";
-import { Session } from "express-session";
-import { generate2FACode, verify2FACode } from "../services/2fa.service";
+import { Request, Response, NextFunction } from 'express';
+import { Session } from 'express-session';
+import { generate2FACode, verify2FACode } from '../services/2fa.service';
 
-// Extend the Session interface
 interface ExtendedSession extends Session {
   email?: string;
   password?: string;
@@ -11,7 +10,6 @@ interface ExtendedSession extends Session {
   twoFAError?: string;
 }
 
-// Extend the Request interface
 interface ExtendedRequest extends Request {
   session: ExtendedSession;
 }
@@ -27,12 +25,12 @@ export const twoFAController = async (
 
   if (twoFactorData) {
     extSession.twoFactorCode = twoFactorData.twoFactorCode;
-    if (typeof twoFactorData.twoFactorExpiry === "number") {
+    if (typeof twoFactorData.twoFactorExpiry === 'number') {
       extSession.twoFactorExpiry = new Date(twoFactorData.twoFactorExpiry);
     }
     extSession.email = email;
     extSession.password = password;
-    return res.status(200).json({ message: "2FA code sent. Please verify the code." });
+    return res.status(200).json({ message: '2FA code sent. Please verify the code.' });
   } else {
     next();
   }
@@ -56,24 +54,24 @@ export const verifyCode = async (
       extendedSession.twoFactorCode = null;
       extendedSession.twoFactorExpiry = null;
     } else {
-      extendedSession.twoFAError = "Invalid or expired 2FA code.";
+      extendedSession.twoFAError = 'Invalid or expired 2FA code.';
     }
   } else {
-    extendedSession.twoFAError = "2FA code or expiring time is missing.";
+    extendedSession.twoFAError = '2FA code or expiring time is missing.';
   }
 
   try {
-    await new Promise((resolve, reject) => {
+    await new Promise<void>((resolve, reject) => {
       req.session.save((err) => {
         if (err) {
           reject(err);
         } else {
-          resolve(null);
+          resolve();
         }
       });
     });
     next();
   } catch (err) {
-    return res.status(500).json({ message: "Error saving session" });
+    return res.status(500).json({ message: 'Error saving session' });
   }
 };
