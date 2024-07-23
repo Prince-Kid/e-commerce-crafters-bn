@@ -4,7 +4,7 @@ const pusher = new Pusher({
   appId: process.env.PUSHER_APP_ID as string,
   key: process.env.PUSHER_KEY as string,
   secret: process.env.PUSHER_SECRET as string,
-  cluster: "mt1",
+  cluster: process.env.PUSHER_CLUSTER as string,
 });
 
 export default pusher
