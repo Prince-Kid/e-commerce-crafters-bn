@@ -127,6 +127,8 @@ export const getSellerOrder = async (req: Request, res: Response) => {
       }
     }
 
+    console.log("products_____:", products)
+
     res.status(200).send(products);
   } catch (error) {
     console.log(error);

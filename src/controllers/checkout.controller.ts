@@ -3,6 +3,7 @@ import Cart from "../database/models/cart";
 import CartItem from "../database/models/cartitem";
 import { Request, Response } from "express";
 import { v4 as uuidv4 } from 'uuid';
+import Product from "../database/models/product";
 
 
 export const createOrder = async (req: Request, res: Response) => {
@@ -41,6 +42,16 @@ export const createOrder = async (req: Request, res: Response) => {
             totalAmount: totalAmount,
             client
         });
+        for (const item of orderItems) {
+            const product = await Product.findOne({ where: { productId: item.productId } });
+            if (product) {
+                product.quantity -= item.quantity;
+                if (product.quantity < 0) {
+                    return res.status(400).json({ message: `Not enough stock for product ${product.productId}` });
+                }
+                await product.save();
+            }
+        }
         await CartItem.destroy({ where: { cartId: cart.cartId } });
         res.status(201).json({ message: 'Order placed successfully', order });
     } catch (error: any) {

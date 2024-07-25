@@ -30,7 +30,6 @@ export const checkout = async (req: Request, res: Response) => {
         };
       })
     );
-    console.log(line_items)
   
 
     const session = await stripe.checkout.sessions.create({
