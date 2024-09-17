@@ -73,7 +73,7 @@ export const getAllOrders = async (req: Request, res: Response) => {
 
     let orders: any;
 
-    orders = await Order.findAll({ where: { userId }})
+    orders = await Order.findAll({ where: { userId } });
 
     return res.status(200).json(orders);
   } catch (error: any) {
@@ -105,8 +105,6 @@ export const getOrder = async (req: Request, res: Response) => {
   }
 };
 
-
-
 export const getSellerOrder = async (req: Request, res: Response) => {
   try {
     const vendorId = req.params.vendorId;
@@ -127,7 +125,7 @@ export const getSellerOrder = async (req: Request, res: Response) => {
       }
     }
 
-    console.log("products_____:", products)
+    console.log("products_____:", products);
 
     res.status(200).send(products);
   } catch (error) {

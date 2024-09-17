@@ -23,7 +23,6 @@ import { request } from "http";
 import { getProductById } from "../services/productService";
 import { fetchSimilarProducts } from "../services/productService";
 
-
 export const createProduct = async (req: Request, res: Response) => {
   try {
     const tokenData = (req as any).token;
@@ -47,7 +46,7 @@ export const createProduct = async (req: Request, res: Response) => {
       category,
       expiringDate,
     } = req.body;
-    console.log(image)
+    console.log(image);
     if (!name || !image || !description || !price || !quantity || !category) {
       return res.status(200).json("All Field are required");
     }
@@ -55,8 +54,6 @@ export const createProduct = async (req: Request, res: Response) => {
     if (!Array.isArray(image) || image.length !== 4) {
       return res.status(400).json({ message: "Exactly 4 images are required" });
     }
-
-
 
     const data = {
       name,
@@ -73,7 +70,7 @@ export const createProduct = async (req: Request, res: Response) => {
     if (!save) {
       return res.status(500).json({ error: "Failed to save data" });
     }
-    
+
     productLifecycleEmitter.emit(PRODUCT_ADDED, data);
 
     return res.status(201).json({ message: "Product Created", data: save });
@@ -106,7 +103,6 @@ export const similarProducts = async (req: Request, res: Response) => {
     const product = await getProductById(productId);
 
     if (!product) {
-
       return res.status(404).json({ error: "Product not found" });
     }
 
@@ -116,10 +112,9 @@ export const similarProducts = async (req: Request, res: Response) => {
     if (similarProducts.length === 0) {
       return res.status(404).json({ error: "No similar products found" });
     }
-    console.log("hhhhhhhhhh",similarProducts)
+    console.log("hhhhhhhhhh", similarProducts);
 
     return res.status(200).json(similarProducts);
-    
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
@@ -142,7 +137,6 @@ export const readAllProducts = async (req: Request, res: Response) => {
     return res.status(500).json({ error: error.message });
   }
 };
-
 
 export const searchProduct = async (req: Request, res: Response) => {
   try {
@@ -206,7 +200,7 @@ export const deleteProduct = async (req: Request, res: Response) => {
     const tokenData = (req as any).token;
     const productId = req.params.id;
     const { vendorId } = req.body;
-    console.log(productId)
+    console.log(productId);
 
     const permissionCheck: any = await checkVendorModifyPermission(
       tokenData,

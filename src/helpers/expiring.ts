@@ -5,42 +5,42 @@ import nodemailer from "nodemailer";
 import models from "../database/models";
 import { Response } from "express";
 export const checkExpiringProducts = async (req?: Request, res?: Response) => {
- try {
-  const expiringProducts = await Product.findAll({
-   where: {
-    expiringDate: {
-     [Op.between]: [
-      new Date(),
-      new Date(new Date().getTime() + 14 * 24 * 60 * 60 * 1000).getTime(),
-     ],
-    },
-   },
-   include: {
-    model: models.Vendor,
-    as: "Vendor",
-   },
-  });
-  console.log(expiringProducts);
-  if (expiringProducts.length === 0) {
-   return res?.status(204).json({ message: "No Expiring Products" });
-  }
+  try {
+    const expiringProducts = await Product.findAll({
+      where: {
+        expiringDate: {
+          [Op.between]: [
+            new Date(),
+            new Date(new Date().getTime() + 14 * 24 * 60 * 60 * 1000).getTime(),
+          ],
+        },
+      },
+      include: {
+        model: models.Vendor,
+        as: "Vendor",
+      },
+    });
+    console.log(expiringProducts);
+    if (expiringProducts.length === 0) {
+      return res?.status(204).json({ message: "No Expiring Products" });
+    }
 
-  const sendEmails = expiringProducts.map(async (product) => {
-   const userId = product.Vendor.userId;
-   const userEmail = await User.findByPk(userId);
-   const transporter = nodemailer.createTransport({
-    service: "gmail",
-    secure: true,
-    auth: {
-     user: process.env.EMAIL,
-     pass: process.env.EMAIL_PASS,
-    },
-   });
-   let mailOptions = {
-    from: process.env.EMAIL,
-    to: userEmail?.email,
-    subject: "Reminder: Expiring Product in Store Inventory⚠️⚠️",
-    html: `<!DOCTYPE html>
+    const sendEmails = expiringProducts.map(async (product) => {
+      const userId = product.Vendor.userId;
+      const userEmail = await User.findByPk(userId);
+      const transporter = nodemailer.createTransport({
+        service: "gmail",
+        secure: true,
+        auth: {
+          user: process.env.EMAIL,
+          pass: process.env.EMAIL_PASS,
+        },
+      });
+      let mailOptions = {
+        from: process.env.EMAIL,
+        to: userEmail?.email,
+        subject: "Reminder: Expiring Product in Store Inventory⚠️⚠️",
+        html: `<!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -115,7 +115,7 @@ export const checkExpiringProducts = async (req?: Request, res?: Response) => {
                <ul>${product.name}</ul>
                 <p>It's essential to take proactive measures to manage these expiring products effectively. Here are a few suggestions:</p>
                 <p>Consider offering special promotions or discounts to encourage customers to purchase these items before they expire. This can help minimize losses and increase sales.</p>
-                <a href="www.gurisha.com" class="button"><span>Add Discount</span></a>
+                <a href="http://localhost:8080/" class="button"><span>Add Discount</span></a>
                 <p>Best regards,<br>Crafters</p>
             </div>
             <div class="footer">
@@ -125,51 +125,51 @@ export const checkExpiringProducts = async (req?: Request, res?: Response) => {
         </div>
     </body>
     </html>`,
-   };
-   await transporter.sendMail(mailOptions);
-  });
-  await Promise.all(sendEmails);
-  res?.status(200).json({ message: "Check Expiring Product Successfully" });
- } catch (error: any) {
-  return res?.status(500).json({ error: error.message });
- }
+      };
+      await transporter.sendMail(mailOptions);
+    });
+    await Promise.all(sendEmails);
+    res?.status(200).json({ message: "Check Expiring Product Successfully" });
+  } catch (error: any) {
+    return res?.status(500).json({ error: error.message });
+  }
 };
 export const checkExpiredProducts = async (req?: Request, res?: Response) => {
- try {
-  const expiredProduct = await Product.findAll({
-   where: {
-    expiringDate: {
-     [Op.lt]: new Date(),
-    },
-    expired: false,
-   },
-   include: {
-    model: models.Vendor,
-    as: "Vendor",
-   },
-  });
-  if (expiredProduct.length === 0) {
-   return res?.status(204).json({
-    message: "No Expired Products To Update",
-   });
-  }
-  const updatePromise = expiredProduct.map(async (product) => {
-   const userId = product.Vendor.userId;
-   const userEmail = await User.findByPk(userId);
-   product.update({ expired: true, available: false }).then(async () => {
-    const transporter = nodemailer.createTransport({
-     service: "gmail",
-     secure: true,
-     auth: {
-      user: process.env.EMAIL,
-      pass: process.env.EMAIL_PASS,
-     },
+  try {
+    const expiredProduct = await Product.findAll({
+      where: {
+        expiringDate: {
+          [Op.lt]: new Date(),
+        },
+        expired: false,
+      },
+      include: {
+        model: models.Vendor,
+        as: "Vendor",
+      },
     });
-    let mailOptions = {
-     from: process.env.EMAIL,
-     to: userEmail?.email,
-     subject: "expireProduct",
-     html: `<!DOCTYPE html>
+    if (expiredProduct.length === 0) {
+      return res?.status(204).json({
+        message: "No Expired Products To Update",
+      });
+    }
+    const updatePromise = expiredProduct.map(async (product) => {
+      const userId = product.Vendor.userId;
+      const userEmail = await User.findByPk(userId);
+      product.update({ expired: true, available: false }).then(async () => {
+        const transporter = nodemailer.createTransport({
+          service: "gmail",
+          secure: true,
+          auth: {
+            user: process.env.EMAIL,
+            pass: process.env.EMAIL_PASS,
+          },
+        });
+        let mailOptions = {
+          from: process.env.EMAIL,
+          to: userEmail?.email,
+          subject: "expireProduct",
+          html: `<!DOCTYPE html>
                     <html lang="en">
                     <head>
                         <meta charset="UTF-8">
@@ -254,17 +254,17 @@ export const checkExpiredProducts = async (req?: Request, res?: Response) => {
                         </div>
                     </body>
                     </html>`,
-    };
-    await transporter.sendMail(mailOptions);
-   });
-  });
-  await Promise.all(updatePromise);
-  res
-   ?.status(200)
-   .json({ message: "Check Expired Product Successfully And Sent Emails" });
- } catch (error: any) {
-  console.log(error.message);
+        };
+        await transporter.sendMail(mailOptions);
+      });
+    });
+    await Promise.all(updatePromise);
+    res
+      ?.status(200)
+      .json({ message: "Check Expired Product Successfully And Sent Emails" });
+  } catch (error: any) {
+    console.log(error.message);
 
-  return res?.status(500).json({ error: error.message });
- }
+    return res?.status(500).json({ error: error.message });
+  }
 };

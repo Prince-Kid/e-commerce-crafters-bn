@@ -1,27 +1,45 @@
-"use strict";
-import { Model, DataTypes, Sequelize } from "sequelize";
+import { Model, DataTypes, Sequelize, Optional } from "sequelize";
 import connectSequelize from "../config/db.config";
-import { ftruncate } from "fs";
+import User from "./user"; // Make sure this path is correct
 
-class Vendor extends Model {
+interface VendorAttributes {
+  vendorId?: string;
+  userId: string;
+  storeName: string;
+  address: any;
+  TIN: number;
+  bankAccount: number;
+  paymentDetails?: any;
+  status?: string;
+}
+
+interface VendorCreationAttributes
+  extends Optional<VendorAttributes, "vendorId"> {}
+
+class Vendor extends Model<VendorAttributes, VendorCreationAttributes> {
   public vendorId?: string;
   public userId!: string;
   public storeName!: string;
   public address!: any;
   public TIN!: number;
   public bankAccount!: number;
-  public paymentDetails!: any;
+  public paymentDetails?: any;
   public status!: string;
+
+  // Declare associations
+  public user?: User; // Add this line to declare the association
+
   static associate(models: any) {
     Vendor.hasMany(models.Product, {
       foreignKey: "vendorId",
-      as: "vendor",
+      as: "Products", // It's better to use "Products" for consistency
     });
     Vendor.belongsTo(models.User, {
       foreignKey: "userId",
-      as: "user",
+      as: "user", // Ensure alias is consistent with the use in queries
     });
   }
+
   static initModel(sequelize: Sequelize) {
     Vendor.init(
       {
